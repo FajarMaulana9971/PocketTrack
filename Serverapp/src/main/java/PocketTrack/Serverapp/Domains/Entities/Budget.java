@@ -35,4 +35,8 @@ public class Budget extends BaseEntity {
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Income> income;
+
+    @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<Outcome> outcome;
 }

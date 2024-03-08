@@ -28,7 +28,7 @@ public class OutcomeRequest {
     private Boolean status;
 
     @NotNull(message = "isDelete must not be empty")
-    private Boolean isDeletede;
+    private Boolean isDeleted;
 
     @NotNull(message = "budget id must not be empty")
     private String budget;

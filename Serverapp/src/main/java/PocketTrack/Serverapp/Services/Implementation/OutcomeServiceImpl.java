@@ -5,6 +5,7 @@ import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import PocketTrack.Serverapp.Domains.Entities.Budget;
 import PocketTrack.Serverapp.Domains.Entities.Outcome;
 import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.OutcomeRequest;
@@ -24,6 +26,7 @@ import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.OutcomeRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
+import PocketTrack.Serverapp.Services.Interfaces.BudgetService;
 import PocketTrack.Serverapp.Services.Interfaces.OutcomeService;
 import PocketTrack.Serverapp.Utilities.GenericSpecificationsBuilder;
 import PocketTrack.Serverapp.Utilities.PaginationUtil;
@@ -38,6 +41,7 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
     private SpecificationFactory<Outcome> outcomeSpecificationFactory;
     private PaginationUtil paginationUtil;
     private ModelMapper modelMapper;
+    private BudgetService budgetService;
 
     /**
      * This method is used to get outcome by title
@@ -110,40 +114,18 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
     }
 
     /**
-     * This method is used to get outcome by status by false value
-     * 
-     * @param status - status of outcome
-     * @return outcome by status false
-     */
-    @Override
-    public List<Outcome> getFalseStatus(Boolean status) {
-        return outcomeRepository.findByStatusFalse()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Outcome status : " + status + NOT_FOUND));
-    }
-
-    /**
      * This method is used to get outcome by status true value with response
      * 
      * @param status - status of outcome
      * @return outcome by status true with response
      */
     @Override
-    public ResponseEntity<ResponseData<List<Outcome>>> getByStatusFalseWithResponse(Boolean status) {
+    public ResponseEntity<ResponseData<List<Outcome>>> getByStatusFalseWithResponse() {
         return ResponseEntity
-                .ok(new ResponseData<>(getFalseStatus(status), "Outcome status : " + status + SUCCESSFULLY_RETRIEVED));
-    }
-
-    /**
-     * This method is used to get outcome by status by true value
-     * 
-     * @param status - status of outcome
-     * @return outcome by status true
-     */
-    @Override
-    public List<Outcome> getTrueStatus(Boolean status) {
-        return outcomeRepository.findByStatusTrue().orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Outcome status : " + status + NOT_FOUND));
+                .ok(new ResponseData<>(
+                        outcomeRepository.findByStatusFalse()
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)),
+                        "Outcome status : FALSE" + SUCCESSFULLY_RETRIEVED));
     }
 
     /**
@@ -153,9 +135,12 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
      * @return outcome by status false with response
      */
     @Override
-    public ResponseEntity<ResponseData<List<Outcome>>> getByStatusTrueWithResponse(Boolean status) {
+    public ResponseEntity<ResponseData<List<Outcome>>> getByStatusTrueWithResponse() {
         return ResponseEntity
-                .ok(new ResponseData<>(getTrueStatus(status), "Outcome status : " + status + SUCCESSFULLY_RETRIEVED));
+                .ok(new ResponseData<>(
+                        outcomeRepository.findByStatusTrue()
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)),
+                        "Outcome status : TRUE" + SUCCESSFULLY_RETRIEVED));
     }
 
     /**
@@ -169,28 +154,27 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
      * @return List of outcome with pagination
      */
     @Override
-    public ObjectResponseData<Outcome> getAllOutcome(LocalDateTime date, String title, BigDecimal amount, int page,
-            int size) {
-        if (page > 0)
+    public ObjectResponseData<Outcome> getAllOutcomeByBudgetId(String budgetId, LocalDateTime date, String title,
+            BigDecimal amount, int page, int size) {
+        if (page > 0) {
             page = page - 1;
-
+        }
         GenericSpecificationsBuilder<Outcome> builder = new GenericSpecificationsBuilder<>();
-
         if (date != null) {
             builder.with(outcomeSpecificationFactory.isContain("date", date));
         }
         if (title != null) {
             builder.with(outcomeSpecificationFactory.isContain("title", title));
         }
-        if (amount != null) {
+        if (title != null) {
             builder.with(outcomeSpecificationFactory.isContain("amount", amount));
         }
-
         try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-            Page<Outcome> outcomes = outcomeRepository.findAll(builder.build(), pageable);
-            PageData pageData = paginationUtil.setPageData(page, size, (int) outcomes.getTotalElements());
-            return new ObjectResponseData<>(outcomes.getContent(), pageData);
+            builder.with(outcomeSpecificationFactory.isEqualJoin("id", budgetId, Collections.singletonList("budget")));
+            Pageable pageable = PageRequest.of(page, size, Sort.by("date").descending());
+            Page<Outcome> outcomePage = outcomeRepository.findAll(builder.build(), pageable);
+            PageData pageData = paginationUtil.setPageData(page, size, (int) outcomePage.getTotalElements());
+            return new ObjectResponseData<>(outcomePage.getContent(), pageData);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
@@ -209,6 +193,63 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
             return new ResponseEntity<>(
                     new ResponseData<>(outcomeRepository.save(outcome), "Outcome" + SUCCESSFULLY_CREATED),
                     HttpStatus.CREATED);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseData<Outcome>> connectOutcomeWithBUdget(String outcomeId, String budgetId) {
+        try {
+            Outcome outcome = getById(outcomeId);
+            Budget budget = budgetService.getById(budgetId);
+            outcome.setBudget(budget);
+            return new ResponseEntity<>(new ResponseData<>(outcomeRepository.save(outcome),
+                    "Outcome and budget has successfully connected"), HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseData<Outcome>> deleteOutcome(String id) {
+        try {
+            Outcome outcome = getById(id);
+            outcome.setIsDeleted(true);
+            outcomeRepository.save(outcome);
+            return new ResponseEntity<>(new ResponseData<>(outcome, "Outcome with id : " + id + SUCCESSFULLY_DELETED),
+                    HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    public ResponseEntity<ResponseData<Outcome>> minusAmountBudgetWithoutcome(String id,
+            OutcomeRequest outcomeRequest) {
+        try {
+            Outcome existingOutcome = getById(id);
+            BigDecimal newAmount = outcomeRequest.getAmount();
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Jakarta"));
+
+            existingOutcome.setDate(now);
+            existingOutcome.setTitle(outcomeRequest.getTitle());
+            existingOutcome.setDescription(outcomeRequest.getDescription());
+            existingOutcome.setAmount(outcomeRequest.getAmount());
+            existingOutcome.setIsDeleted(false);
+            existingOutcome.setStatus(outcomeRequest.getStatus());
+            if (outcomeRequest.getStatus() == false) {
+                return new ResponseEntity<>(
+                        new ResponseData<>(existingOutcome, "Outcome is rejected because status is false"),
+                        HttpStatus.BAD_REQUEST);
+            }
+            Outcome updatedOutcome = outcomeRepository.save(existingOutcome);
+            Budget budget = updatedOutcome.getBudget();
+            BigDecimal totalBalance = budget.getTotalBalance().subtract(newAmount);
+            budget.setTotalBalance(totalBalance);
+            budget.setDate(now);
+            return new ResponseEntity<>(new ResponseData<>(updatedOutcome, "Outcome has successfully completed"),
+                    HttpStatus.OK);
+
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }

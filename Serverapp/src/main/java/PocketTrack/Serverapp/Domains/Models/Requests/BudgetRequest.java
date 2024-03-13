@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class BudgetRequest {
     private LocalDateTime date;
-    private BigDecimal totalBalance;
+
+    private BigDecimal totalBalance = BigDecimal.ZERO;
 }

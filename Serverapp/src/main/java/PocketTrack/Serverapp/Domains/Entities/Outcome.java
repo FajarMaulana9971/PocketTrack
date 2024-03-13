@@ -36,7 +36,7 @@ public class Outcome extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "approval_status")
     @Comment("this atributte for approval status")
     private Boolean status;
 

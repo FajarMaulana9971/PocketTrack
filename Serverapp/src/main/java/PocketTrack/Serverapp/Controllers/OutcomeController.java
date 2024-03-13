@@ -60,7 +60,7 @@ public class OutcomeController {
         return outcomeService.connectOutcomeWithBUdget(outcomeId, budgetId);
     }
 
-    @GetMapping
+    @GetMapping("{budgetId}/outcome-budget")
     public ObjectResponseData<Outcome> getAllOutcome(@PathVariable String budgetId,
             @RequestParam(required = false) LocalDateTime date,
             @RequestParam(required = false) String title,

@@ -12,7 +12,7 @@ public interface IncomeService extends BaseServices<Income, String> {
 
     ResponseEntity<ResponseData<Income>> getByTitleWithResponse(String title);
 
-    ObjectResponseData<Income> getAllIncomeByBudget(String id, String keyword, int page, int size);
+    ObjectResponseData<Income> getAllIncomeByBudget(String budgetId, String keyword, int page, int size);
 
     void connectIncomeWithBudget(String incomeId, String BudgetId);
 

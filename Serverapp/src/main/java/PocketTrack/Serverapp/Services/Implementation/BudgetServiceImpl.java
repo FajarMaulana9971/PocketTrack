@@ -1,6 +1,8 @@
 package PocketTrack.Serverapp.Services.Implementation;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.*;
 
 import PocketTrack.Serverapp.Domains.Entities.Budget;
+import PocketTrack.Serverapp.Domains.Entities.Income;
+import PocketTrack.Serverapp.Domains.Entities.Outcome;
 import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.BudgetRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
@@ -97,6 +101,18 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
     public ResponseEntity<ResponseData<Budget>> insertBudget(BudgetRequest budgetRequest) {
         try {
             Budget budget = modelMapper.map(budgetRequest, Budget.class);
+            Income income = new Income();
+            Outcome outcome = new Outcome();
+            ZoneId zoneId = ZoneId.of("Asia/Jakarta");
+            LocalDateTime now = LocalDateTime.now(zoneId);
+            income.setDate(now);
+            income.setDescription("First maker of Budget".toString().toLowerCase());
+            income.setTitle("new budget".toString().toUpperCase());
+            income.setAmount(BigDecimal.ZERO);
+            outcome.setDate(now);
+            outcome.setDescription("First maker of Budget".toString().toLowerCase());
+            outcome.setTitle("new budget".toString().toUpperCase());
+            outcome.setAmount(BigDecimal.ZERO);
             return new ResponseEntity<>(
                     new ResponseData<>(budgetRepository.save(budget), "Budget" + SUCCESSFULLY_CREATED),
                     HttpStatus.CREATED);

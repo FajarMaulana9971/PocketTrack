@@ -48,7 +48,7 @@ public class BudgetController {
     }
 
     @PostMapping("insert")
-    public ResponseEntity<?> insertBudget(@Valid @RequestBody BudgetRequest budgetRequest, Errors error) {
+    public ResponseEntity<?> insertBudget(BudgetRequest budgetRequest, Errors error) {
         if (error.hasErrors()) {
             List<ErrorData> errorDataList = new ArrayList<>();
             error.getAllErrors().forEach(errorr -> errorDataList.add(new ErrorData(errorr.getDefaultMessage())));

@@ -23,6 +23,8 @@ import PocketTrack.Serverapp.Domains.Models.Requests.BudgetRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.BudgetRepository;
+import PocketTrack.Serverapp.Repositories.IncomeRepository;
+import PocketTrack.Serverapp.Repositories.OutcomeRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.BudgetService;
 import PocketTrack.Serverapp.Utilities.GenericSpecificationsBuilder;
@@ -38,6 +40,8 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
     private ModelMapper modelMapper;
     private SpecificationFactory<Budget> specificationFactory;
     private PaginationUtil paginationUtil;
+    private IncomeRepository incomeRepository;
+    private OutcomeRepository outcomeRepository;
 
     /**
      * This method is used to get budget by total balance
@@ -101,20 +105,34 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
     public ResponseEntity<ResponseData<Budget>> insertBudget(BudgetRequest budgetRequest) {
         try {
             Budget budget = modelMapper.map(budgetRequest, Budget.class);
-            Income income = new Income();
-            Outcome outcome = new Outcome();
+
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");
             LocalDateTime now = LocalDateTime.now(zoneId);
+
+            budget.setDate(now);
+            System.out.println(budget.getTotalBalance());
+            Budget savedBudget = budgetRepository.save(budget);
+
+            Income income = new Income();
             income.setDate(now);
-            income.setDescription("First maker of Budget".toString().toLowerCase());
-            income.setTitle("new budget".toString().toUpperCase());
+            income.setDescription("First commit by budget create".toLowerCase());
+            income.setTitle("First Commit".toUpperCase());
             income.setAmount(BigDecimal.ZERO);
+            income.setBudget(savedBudget);
+            incomeRepository.save(income);
+
+            Outcome outcome = new Outcome();
             outcome.setDate(now);
-            outcome.setDescription("First maker of Budget".toString().toLowerCase());
-            outcome.setTitle("new budget".toString().toUpperCase());
+            outcome.setDescription("first commit by budget create".toLowerCase());
+            outcome.setTitle("first commit".toUpperCase());
             outcome.setAmount(BigDecimal.ZERO);
+            outcome.setBudget(savedBudget);
+            outcome.setIsDeleted(false);
+            outcome.setStatus(true);
+            outcomeRepository.save(outcome);
+
             return new ResponseEntity<>(
-                    new ResponseData<>(budgetRepository.save(budget), "Budget" + SUCCESSFULLY_CREATED),
+                    new ResponseData<>(budgetRepository.save(savedBudget), "Budget" + SUCCESSFULLY_CREATED),
                     HttpStatus.CREATED);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());

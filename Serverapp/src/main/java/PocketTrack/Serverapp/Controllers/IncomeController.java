@@ -25,7 +25,7 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("income")
+@RequestMapping("/income")
 public class IncomeController {
     private IncomeService incomeService;
 
@@ -44,12 +44,12 @@ public class IncomeController {
         incomeService.connectIncomeWithBudget(incomeId, budgetId);
     }
 
-    @GetMapping
-    public ObjectResponseData<Income> getAllIncomeByBudgetId(@PathVariable String id,
+    @GetMapping("{id}/budget-income")
+    public ObjectResponseData<Income> getAllIncomeByBudgetId(@PathVariable String budgetId,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false, defaultValue = "10") int page,
-            @RequestParam(required = false, defaultValue = "0") int size) {
-        return incomeService.getAllIncomeByBudget(id, keyword, page, size);
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+        return incomeService.getAllIncomeByBudget(budgetId, keyword, page, size);
     }
 
     @PostMapping("insert")

@@ -87,12 +87,12 @@ public class IncomeServiceImpl extends BaseServicesImpl<Income, String> implemen
      * @return List of income by budgetId with pagination
      */
     @Override
-    public ObjectResponseData<Income> getAllIncomeByBudget(String id, String keyword, int page, int size) {
+    public ObjectResponseData<Income> getAllIncomeByBudget(String budgetId, String keyword, int page, int size) {
         if (page > 0)
             page = page - 1;
 
         try {
-            Budget budget = budgetService.getById(id);
+            Budget budget = budgetService.getById(budgetId);
             List<Income> incomes = budget.getIncome();
             if (keyword != null && !keyword.isEmpty()) {
                 incomes = incomes.stream().filter(incoming -> incoming.getTitle().contains(keyword)

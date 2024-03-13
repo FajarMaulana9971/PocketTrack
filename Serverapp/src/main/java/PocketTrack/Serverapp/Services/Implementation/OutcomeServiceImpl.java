@@ -24,6 +24,7 @@ import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.OutcomeRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
+import PocketTrack.Serverapp.Repositories.BudgetRepository;
 import PocketTrack.Serverapp.Repositories.OutcomeRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.BudgetService;
@@ -42,6 +43,7 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
     private PaginationUtil paginationUtil;
     private ModelMapper modelMapper;
     private BudgetService budgetService;
+    private BudgetRepository budgetRepository;
 
     /**
      * This method is used to get outcome by title
@@ -180,6 +182,12 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
         }
     }
 
+    /**
+     * This method is used to insert new outcome
+     * 
+     * @param outcomeRequest - Request body of outcome
+     * @return Outcome with response data
+     */
     @Override
     public ResponseEntity<ResponseData<Outcome>> insertOutcome(OutcomeRequest outcomeRequest) {
         try {
@@ -189,6 +197,9 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");
             LocalDateTime now = LocalDateTime.now(zoneId);
             outcome.setDate(now);
+            Budget budget = budgetRepository.findById(outcomeRequest.getBudget())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget id is not found"));
+            outcome.setBudget(budget);
 
             return new ResponseEntity<>(
                     new ResponseData<>(outcomeRepository.save(outcome), "Outcome" + SUCCESSFULLY_CREATED),

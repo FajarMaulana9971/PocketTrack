@@ -151,8 +151,10 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
             Budget budget = modelMapper.map(budgetRequest, Budget.class);
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");
             LocalDateTime now = LocalDateTime.now(zoneId);
+
             budget.setTotalBalance(budgetRequest.getTotalBalance());
             budget.setId(getById(id).getId());
+            budget.setDate(now);
             return new ResponseEntity<>(
                     new ResponseData<>(budgetRepository.save(budget), "Budget" + SUCCESSFULLY_UPDATED), HttpStatus.OK);
         } catch (ResponseStatusException e) {

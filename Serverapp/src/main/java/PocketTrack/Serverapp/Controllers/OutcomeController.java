@@ -84,14 +84,14 @@ public class OutcomeController {
         return outcomeService.deleteOutcome(id);
     }
 
-    @PatchMapping("minus-amount/{id}")
-    public ResponseEntity<?> minusAmountBudgetwithOutcomeId(@PathVariable String budgetId,
+    @PatchMapping("minus-amount/{outcomeId}")
+    public ResponseEntity<?> minusAmountBudgetwithOutcomeId(@PathVariable String outcomeId,
             @Valid @RequestBody OutcomeRequest outcomeRequest, Errors errors) {
         if (errors.hasErrors()) {
             List<ErrorData> errorDatas = new ArrayList<>();
             errors.getAllErrors().forEach(error -> errorDatas.add(new ErrorData(error.getDefaultMessage())));
         }
-        return outcomeService.minusAmountBudgetWithoutcome(budgetId, outcomeRequest);
+        return outcomeService.minusAmountBudgetWithoutcome(outcomeId, outcomeRequest);
     }
 
 }

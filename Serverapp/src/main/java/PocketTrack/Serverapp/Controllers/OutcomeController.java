@@ -85,13 +85,13 @@ public class OutcomeController {
     }
 
     @PatchMapping("minus-amount/{id}")
-    public ResponseEntity<?> minusAmountBudgetwithOutcomeId(@PathVariable String id,
+    public ResponseEntity<?> minusAmountBudgetwithOutcomeId(@PathVariable String budgetId,
             @Valid @RequestBody OutcomeRequest outcomeRequest, Errors errors) {
         if (errors.hasErrors()) {
             List<ErrorData> errorDatas = new ArrayList<>();
             errors.getAllErrors().forEach(error -> errorDatas.add(new ErrorData(error.getDefaultMessage())));
         }
-        return outcomeService.minusAmountBudgetWithoutcome(id, outcomeRequest);
+        return outcomeService.minusAmountBudgetWithoutcome(budgetId, outcomeRequest);
     }
 
 }

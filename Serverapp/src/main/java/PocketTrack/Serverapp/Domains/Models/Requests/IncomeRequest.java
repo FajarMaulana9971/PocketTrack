@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class IncomeRequest {
-    @NotEmpty(message = "date must not be empty")
+    // @NotEmpty(message = "date must not be empty")
     private LocalDateTime date;
 
     @NotEmpty(message = "title must not be empty")
@@ -21,9 +21,9 @@ public class IncomeRequest {
     @NotEmpty(message = "description must not be empty")
     private String description;
 
-    @NotEmpty(message = "amount must not be empty")
     private BigDecimal amount;
 
     @NotEmpty(message = "budget id must not be empty")
     private String budget;
+
 }

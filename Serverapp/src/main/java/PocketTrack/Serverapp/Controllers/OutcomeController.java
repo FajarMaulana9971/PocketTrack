@@ -2,10 +2,14 @@ package PocketTrack.Serverapp.Controllers;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import PocketTrack.Serverapp.Domains.Entities.Outcome;
+import PocketTrack.Serverapp.Domains.Models.ErrorData;
 import PocketTrack.Serverapp.Domains.Models.Requests.OutcomeRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Services.Interfaces.OutcomeService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -62,12 +68,10 @@ public class OutcomeController {
 
     @GetMapping("{budgetId}/outcome-budget")
     public ObjectResponseData<Outcome> getAllOutcome(@PathVariable String budgetId,
-            @RequestParam(required = false) LocalDateTime date,
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) BigDecimal amount,
+            @RequestParam(required = false) String keywoard,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size) {
-        return getAllOutcome(budgetId, date, title, amount, page, size);
+        return outcomeService.getAllOutcomeByBudgetId(budgetId, keywoard, page, size);
     }
 
     @PostMapping("insert")
@@ -78,6 +82,16 @@ public class OutcomeController {
     @DeleteMapping("{id}/delete")
     public ResponseEntity<?> deleteOutcome(@PathVariable String id) {
         return outcomeService.deleteOutcome(id);
+    }
+
+    @PatchMapping("minus-amount/{id}")
+    public ResponseEntity<?> minusAmountBudgetwithOutcomeId(@PathVariable String id,
+            @Valid @RequestBody OutcomeRequest outcomeRequest, Errors errors) {
+        if (errors.hasErrors()) {
+            List<ErrorData> errorDatas = new ArrayList<>();
+            errors.getAllErrors().forEach(error -> errorDatas.add(new ErrorData(error.getDefaultMessage())));
+        }
+        return outcomeService.minusAmountBudgetWithoutcome(id, outcomeRequest);
     }
 
 }

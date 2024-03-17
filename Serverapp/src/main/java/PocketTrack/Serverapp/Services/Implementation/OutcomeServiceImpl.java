@@ -7,9 +7,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -156,27 +158,27 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
      * @return List of outcome with pagination
      */
     @Override
-    public ObjectResponseData<Outcome> getAllOutcomeByBudgetId(String budgetId, LocalDateTime date, String title,
-            BigDecimal amount, int page, int size) {
-        if (page > 0) {
+    public ObjectResponseData<Outcome> getAllOutcomeByBudgetId(String budgetId, String keywoard, int page, int size) {
+        if (page > 0)
             page = page - 1;
-        }
-        GenericSpecificationsBuilder<Outcome> builder = new GenericSpecificationsBuilder<>();
-        if (date != null) {
-            builder.with(outcomeSpecificationFactory.isContain("date", date));
-        }
-        if (title != null) {
-            builder.with(outcomeSpecificationFactory.isContain("title", title));
-        }
-        if (title != null) {
-            builder.with(outcomeSpecificationFactory.isContain("amount", amount));
-        }
+
         try {
-            builder.with(outcomeSpecificationFactory.isEqualJoin("id", budgetId, Collections.singletonList("budget")));
-            Pageable pageable = PageRequest.of(page, size, Sort.by("date").descending());
-            Page<Outcome> outcomePage = outcomeRepository.findAll(builder.build(), pageable);
-            PageData pageData = paginationUtil.setPageData(page, size, (int) outcomePage.getTotalElements());
-            return new ObjectResponseData<>(outcomePage.getContent(), pageData);
+            Budget budget = budgetService.getById(budgetId);
+            List<Outcome> outcomes = budget.getOutcome();
+            if (keywoard != null && !keywoard.isEmpty()) {
+                outcomes = outcomes.stream()
+                        .filter(outcoming -> outcoming.getTitle().contains(keywoard)
+                                || outcoming.getDate().toString().contains(keywoard)
+                                || outcoming.getStatus().equals(keywoard))
+                        .collect(Collectors.toList());
+            }
+            int fromIndex = page * size;
+            int toIndex = Math.min(fromIndex + size, outcomes.size());
+            List<Outcome> paginatedOutcomes = outcomes.subList(fromIndex, toIndex);
+
+            Page<Outcome> pageResult = new PageImpl<>(paginatedOutcomes, PageRequest.of(page, size), outcomes.size());
+            PageData pagination = paginationUtil.setPageData(page, size, outcomes.size());
+            return new ObjectResponseData<>(pageResult.getContent(), pagination);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
@@ -235,6 +237,7 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
         }
     }
 
+    @Override
     public ResponseEntity<ResponseData<Outcome>> minusAmountBudgetWithoutcome(String id,
             OutcomeRequest outcomeRequest) {
         try {

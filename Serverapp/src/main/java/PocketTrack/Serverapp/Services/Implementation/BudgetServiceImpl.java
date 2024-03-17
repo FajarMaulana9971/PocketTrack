@@ -110,7 +110,6 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
             LocalDateTime now = LocalDateTime.now(zoneId);
 
             budget.setDate(now);
-            System.out.println(budget.getTotalBalance());
             Budget savedBudget = budgetRepository.save(budget);
 
             Income income = new Income();
@@ -150,6 +149,9 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
     public ResponseEntity<ResponseData<Budget>> updateBudget(String id, BudgetRequest budgetRequest) {
         try {
             Budget budget = modelMapper.map(budgetRequest, Budget.class);
+            ZoneId zoneId = ZoneId.of("Asia/Jakarta");
+            LocalDateTime now = LocalDateTime.now(zoneId);
+            budget.setTotalBalance(budgetRequest.getTotalBalance());
             budget.setId(getById(id).getId());
             return new ResponseEntity<>(
                     new ResponseData<>(budgetRepository.save(budget), "Budget" + SUCCESSFULLY_UPDATED), HttpStatus.OK);

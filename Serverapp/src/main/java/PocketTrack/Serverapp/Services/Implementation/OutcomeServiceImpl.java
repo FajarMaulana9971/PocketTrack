@@ -261,6 +261,7 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
             BigDecimal totalBalance = budget.getTotalBalance().subtract(newAmount);
             budget.setTotalBalance(totalBalance);
             budget.setDate(now);
+            budgetRepository.save(budget);
             return new ResponseEntity<>(new ResponseData<>(updatedOutcome, "Outcome has successfully completed"),
                     HttpStatus.OK);
 

@@ -3,6 +3,8 @@ package PocketTrack.Serverapp.Services.Implementation;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -138,11 +140,13 @@ public class IncomeServiceImpl extends BaseServicesImpl<Income, String> implemen
     @Override
     public ResponseEntity<ResponseData<Income>> addAmountBudgetWithIncomeId(String id, IncomeRequest incomeRequest) {
         try {
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Jakarta"));
             Income existingIncome = getById(id);
             BigDecimal newAmount = incomeRequest.getAmount();
-            existingIncome.setDate(incomeRequest.getDate());
+            existingIncome.setDate(now);
             existingIncome.setDescription(incomeRequest.getDescription());
             existingIncome.setAmount(incomeRequest.getAmount());
+            existingIncome.setTitle(incomeRequest.getTitle());
 
             Income updatedIncome = incomeRepository.save(existingIncome);
 

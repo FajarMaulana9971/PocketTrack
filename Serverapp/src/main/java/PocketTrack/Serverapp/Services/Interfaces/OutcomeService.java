@@ -29,12 +29,13 @@ public interface OutcomeService extends BaseServices<Outcome, String> {
 
     ResponseEntity<ResponseData<List<Outcome>>> getByStatusTrueWithResponse();
 
-    ObjectResponseData<Outcome> getAllOutcomeByBudgetId(String budgetId, LocalDateTime date, String title,
-            BigDecimal amount, int page, int size);
+    ObjectResponseData<Outcome> getAllOutcomeByBudgetId(String budgetId, String keywoard, int page, int size);
 
     ResponseEntity<ResponseData<Outcome>> insertOutcome(OutcomeRequest outcomeRequest);
 
     ResponseEntity<ResponseData<Outcome>> connectOutcomeWithBUdget(String outcomeId, String budgetId);
+
+    public ResponseEntity<ResponseData<Outcome>> minusAmountBudgetWithoutcome(String id, OutcomeRequest outcomeRequest);
 
     ResponseEntity<ResponseData<Outcome>> deleteOutcome(String id);
 

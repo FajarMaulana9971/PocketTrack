@@ -35,9 +35,9 @@ public interface OutcomeService extends BaseServices<Outcome, String> {
 
     ResponseEntity<ResponseData<Outcome>> connectOutcomeWithBUdget(String outcomeId, String budgetId);
 
-    public ResponseEntity<ResponseData<Outcome>> minusAmountBudgetWithoutcome(String outcomeId,
+    public ResponseEntity<ResponseData<Outcome>> minusAmountBudgetWithOutcome(String outcomeId,
             OutcomeRequest outcomeRequest);
 
-    ResponseEntity<ResponseData<Outcome>> deleteOutcome(String id);
+    ResponseEntity<ResponseData<Outcome>> deleteOutcome(String outcomeId);
 
 }

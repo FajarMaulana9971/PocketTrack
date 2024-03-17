@@ -79,9 +79,9 @@ public class OutcomeController {
         return outcomeService.insertOutcome(outcomeRequest);
     }
 
-    @DeleteMapping("{id}/delete")
-    public ResponseEntity<?> deleteOutcome(@PathVariable String id) {
-        return outcomeService.deleteOutcome(id);
+    @DeleteMapping("{outcomeId}/delete")
+    public ResponseEntity<?> deleteOutcome(@PathVariable String outcomeId) {
+        return outcomeService.deleteOutcome(outcomeId);
     }
 
     @PatchMapping("minus-amount/{outcomeId}")
@@ -91,7 +91,7 @@ public class OutcomeController {
             List<ErrorData> errorDatas = new ArrayList<>();
             errors.getAllErrors().forEach(error -> errorDatas.add(new ErrorData(error.getDefaultMessage())));
         }
-        return outcomeService.minusAmountBudgetWithoutcome(outcomeId, outcomeRequest);
+        return outcomeService.minusAmountBudgetWithOutcome(outcomeId, outcomeRequest);
     }
 
 }

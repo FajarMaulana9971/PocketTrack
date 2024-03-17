@@ -5,7 +5,6 @@ import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,8 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,9 +28,7 @@ import PocketTrack.Serverapp.Repositories.OutcomeRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.BudgetService;
 import PocketTrack.Serverapp.Services.Interfaces.OutcomeService;
-import PocketTrack.Serverapp.Utilities.GenericSpecificationsBuilder;
 import PocketTrack.Serverapp.Utilities.PaginationUtil;
-import PocketTrack.Serverapp.Utilities.SpecificationFactory;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -41,7 +36,6 @@ import lombok.AllArgsConstructor;
 public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implements OutcomeService {
 
     private OutcomeRepository outcomeRepository;
-    private SpecificationFactory<Outcome> outcomeSpecificationFactory;
     private PaginationUtil paginationUtil;
     private ModelMapper modelMapper;
     private BudgetService budgetService;
@@ -148,14 +142,13 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
     }
 
     /**
-     * This method is used to get all outcome
+     * This method is used to get all outcome by budget id
      * 
-     * @param date   - date of outcome
-     * @param title  - title of outcome
-     * @param amount - amount of outcome
-     * @param page   - Page number
-     * @param size   - Size of page
-     * @return List of outcome with pagination
+     * @param budgetId - id of budget
+     * @param keywoard - keywoard of outcome
+     * @param page     - Page number
+     * @param size     - Size of page
+     * @return List of outcome by budget id with pagination
      */
     @Override
     public ObjectResponseData<Outcome> getAllOutcomeByBudgetId(String budgetId, String keywoard, int page, int size) {
@@ -199,7 +192,11 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");
             LocalDateTime now = LocalDateTime.now(zoneId);
             outcome.setDate(now);
-            Budget budget = budgetRepository.findById(outcomeRequest.getBudget())
+            String budgetId = outcomeRequest.getBudget();
+            if (budgetId == null || budgetId.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Budget id is cannot be null");
+            }
+            Budget budget = budgetRepository.findById(budgetId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget id is not found"));
             outcome.setBudget(budget);
 
@@ -211,6 +208,13 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
         }
     }
 
+    /**
+     * This method is used to connect outcome with budget by their id
+     * 
+     * @param outcomeId - path variable of outcome id
+     * @param budgetId  - path variable of budget id
+     * @return Outcome with response data
+     */
     @Override
     public ResponseEntity<ResponseData<Outcome>> connectOutcomeWithBUdget(String outcomeId, String budgetId) {
         try {
@@ -224,21 +228,35 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
         }
     }
 
+    /**
+     * This method is used to soft delete outcome by their id
+     * 
+     * @param outcomeId - path variable of outcome id
+     * @return Outcome with response data
+     */
     @Override
-    public ResponseEntity<ResponseData<Outcome>> deleteOutcome(String id) {
+    public ResponseEntity<ResponseData<Outcome>> deleteOutcome(String outcomeId) {
         try {
-            Outcome outcome = getById(id);
+            Outcome outcome = getById(outcomeId);
             outcome.setIsDeleted(true);
             outcomeRepository.save(outcome);
-            return new ResponseEntity<>(new ResponseData<>(outcome, "Outcome with id : " + id + SUCCESSFULLY_DELETED),
+            return new ResponseEntity<>(
+                    new ResponseData<>(outcome, "Outcome with id : " + outcomeId + SUCCESSFULLY_DELETED),
                     HttpStatus.OK);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
     }
 
+    /**
+     * This method is used to minus amount total balance of budget by outcome id
+     * 
+     * @param outcomeId      - path variable of outcome id
+     * @param outcomeRequest - request body of outcome
+     * @return Outcome with response data
+     */
     @Override
-    public ResponseEntity<ResponseData<Outcome>> minusAmountBudgetWithoutcome(String outcomeId,
+    public ResponseEntity<ResponseData<Outcome>> minusAmountBudgetWithOutcome(String outcomeId,
             OutcomeRequest outcomeRequest) {
         try {
             Outcome existingOutcome = getById(outcomeId);

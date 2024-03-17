@@ -238,10 +238,10 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
     }
 
     @Override
-    public ResponseEntity<ResponseData<Outcome>> minusAmountBudgetWithoutcome(String budgetId,
+    public ResponseEntity<ResponseData<Outcome>> minusAmountBudgetWithoutcome(String outcomeId,
             OutcomeRequest outcomeRequest) {
         try {
-            Outcome existingOutcome = getById(budgetId);
+            Outcome existingOutcome = getById(outcomeId);
             BigDecimal newAmount = outcomeRequest.getAmount();
             LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Jakarta"));
 

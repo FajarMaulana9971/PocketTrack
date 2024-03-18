@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import PocketTrack.Serverapp.Domains.Entities.User;
-import PocketTrack.Serverapp.Domains.Models.Requests.UserData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
+import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
@@ -55,6 +55,30 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
+    }
+
+    /**
+     * This method is used to get users
+     * 
+     * @return Users Response with list of user data
+     */
+    public ResponseEntity<UsersResponseList> getAllUser() {
+        UsersResponseList usersResponseList = new UsersResponseList();
+        List<UserResponse> userResponses = new ArrayList<>();
+        for (User user : userRepository.findAll()) {
+            UserResponse userResponse = new UserResponse();
+            userResponse.setId(user.getId());
+            userResponse.setName(user.getName());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setBirthDate(user.getBirthDate());
+            userResponse.setGender(user.getGender());
+            userResponse.setJoinDate(user.getJoinDate());
+            userResponse.setRoles(user.getAccount().getAccountRoles().stream().collect(ArrayList::new,
+                    (list, accountRole) -> list.add(accountRole.getRole().getName()), ArrayList::addAll));
+            userResponses.add(userResponse);
+        }
+        usersResponseList.setUserResponsesList(userResponses);
+        return new ResponseEntity<>(usersResponseList, HttpStatus.OK);
     }
 
 }

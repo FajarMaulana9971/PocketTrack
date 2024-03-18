@@ -3,6 +3,8 @@ package PocketTrack.Serverapp.Domains.Entities;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+import org.hibernate.annotations.Comment;
+
 import PocketTrack.Serverapp.Domains.Entities.Base.BaseEntity;
 import PocketTrack.Serverapp.Domains.Enums.Gender;
 import jakarta.persistence.Column;
@@ -31,6 +33,10 @@ public class User extends BaseEntity {
 
     @Column(length = 100, nullable = false, unique = true)
     private String email;
+
+    @Column(length = 36, nullable = false, unique = true)
+    @Comment("This attributes is only for whatsapp number")
+    private String numberPhone;
 
     private LocalDate birthDate;
 

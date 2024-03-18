@@ -3,6 +3,9 @@ package PocketTrack.Serverapp.Services.Implementation;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.NOT_FOUND;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_RETRIEVED;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import PocketTrack.Serverapp.Domains.Entities.User;
+import PocketTrack.Serverapp.Domains.Models.Requests.UserData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Repositories.UserRepository;
@@ -23,11 +27,25 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
     private UserRepository userRepository;
     private ModelMapper modelMapper;
 
+    /**
+     * This method is used to get user by email
+     * 
+     * @param email -Email of user
+     * @return User
+     */
+    @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with email : " + email + NOT_FOUND));
     }
 
+    /**
+     * This method is used to get user by email
+     * 
+     * @param email -Email of user
+     * @return User response with response data
+     */
+    @Override
     public ResponseEntity<ResponseData<UserResponse>> findByEmailWithResponse(String email) {
         try {
             User user = getUserByEmail(email);
@@ -38,4 +56,5 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
     }
+
 }

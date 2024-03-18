@@ -26,12 +26,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "tb_m_users", indexes = @Index(name = "idx_email", columnList = "email", unique = true))
 public class User extends BaseEntity {
 
+    @Column(length = 100, nullable = false)
     private String name;
 
+    @Column(length = 100, nullable = false, unique = true)
     private String email;
 
     private LocalDate birthDate;
 
+    @Column(name = "join_date", nullable = false)
     private LocalDate joinDate = LocalDate.now(ZoneId.of("Asia/Jakarta"));
 
     @Column(nullable = false)

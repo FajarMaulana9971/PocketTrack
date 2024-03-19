@@ -12,10 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
+import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
@@ -25,6 +27,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserServiceImpl extends BaseServicesImpl<User, String> implements UserService {
     private UserRepository userRepository;
+    private AccountRoleRepository accountRoleRepository;
     private ModelMapper modelMapper;
 
     /**
@@ -79,6 +82,19 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
         }
         usersResponseList.setUserResponsesList(userResponses);
         return new ResponseEntity<>(usersResponseList, HttpStatus.OK);
+    }
+
+    /**
+     * This method is used to get account role
+     * 
+     * @param id -ID of user
+     * @return List of account role
+     */
+    public List<String> getAccountRole(String id) {
+        List<AccountRole> accountRoles = accountRoleRepository.findByAccountId(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with id : " + id + NOT_FOUND));
+        return accountRoles.stream().collect(ArrayList::new,
+                (list, accountRole) -> list.add(accountRole.getRole().getName()), ArrayList::addAll);
     }
 
 }

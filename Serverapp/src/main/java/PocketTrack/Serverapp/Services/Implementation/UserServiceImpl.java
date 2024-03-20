@@ -23,6 +23,7 @@ import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
 import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
+import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
@@ -35,6 +36,7 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
     private AccountRoleRepository accountRoleRepository;
     private ModelMapper modelMapper;
     private PasswordEncoder passwordEncoder;
+    private RoleRepository roleRepository;
 
     /**
      * This method is used to get user by email
@@ -120,6 +122,11 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
 
             user.setAccount(account);
             userRepository.save(user);
+
+            AccountRole accountRole = new AccountRole();
+            accountRole.setRole(roleRepository.findByName("ROLE_USER"));
+            accountRole.setAccount(account);
+            accountRoleRepository.save(accountRole);
 
             return new ResponseEntity<>(new ResponseData<>(getById(user.getId()), "User" + SUCCESSFULLY_CREATED),
                     HttpStatus.OK);

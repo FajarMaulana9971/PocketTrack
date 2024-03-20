@@ -41,7 +41,7 @@ public class User extends BaseEntity {
     private LocalDate birthDate;
 
     @Column(name = "join_date", nullable = false)
-    private LocalDate joinDate = LocalDate.now(ZoneId.of("Asia/Jakarta"));
+    private LocalDate joinDate;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

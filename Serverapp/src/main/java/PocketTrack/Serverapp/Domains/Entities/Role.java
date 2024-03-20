@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import PocketTrack.Serverapp.Domains.Entities.Base.BaseEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Table(name = "tb_m_roles")
+@Entity
 @EqualsAndHashCode(callSuper = false)
 public class Role extends BaseEntity {
 

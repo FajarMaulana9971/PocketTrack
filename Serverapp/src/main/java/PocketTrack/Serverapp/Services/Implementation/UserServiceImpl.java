@@ -1,19 +1,24 @@
 package PocketTrack.Serverapp.Services.Implementation;
 
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.NOT_FOUND;
+import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_CREATED;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_RETRIEVED;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.User;
+import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
@@ -29,6 +34,7 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
     private UserRepository userRepository;
     private AccountRoleRepository accountRoleRepository;
     private ModelMapper modelMapper;
+    private PasswordEncoder passwordEncoder;
 
     /**
      * This method is used to get user by email
@@ -97,4 +103,29 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
                 (list, accountRole) -> list.add(accountRole.getRole().getName()), ArrayList::addAll);
     }
 
+    public ResponseEntity<ResponseData<User>> registration(UserRequest userRequest) {
+        try {
+            User user = new User();
+            user.setName(userRequest.getName());
+            user.setEmail(userRequest.getEmail());
+            user.setNumberPhone(userRequest.getNumberPhone());
+            user.setBirthDate(userRequest.getBirthDate());
+            user.setGender(userRequest.getGender());
+
+            Account account = new Account();
+            account.setUsername(userRequest.getUsername());
+            account.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+            account.setVerificationCode(UUID.randomUUID().toString());
+            account.setUser(user);
+
+            user.setAccount(account);
+            userRepository.save(user);
+
+            return new ResponseEntity<>(new ResponseData<>(getById(user.getId()), "User" + SUCCESSFULLY_CREATED),
+                    HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+
+    }
 }

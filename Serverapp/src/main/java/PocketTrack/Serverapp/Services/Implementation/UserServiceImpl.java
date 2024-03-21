@@ -18,25 +18,29 @@ import org.springframework.web.server.ResponseStatusException;
 import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.User;
+import PocketTrack.Serverapp.Domains.Models.Requests.UserPasswordRequestData;
+import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
+import PocketTrack.Serverapp.Repositories.AccountRepository;
 import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
 import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl extends BaseServicesImpl<User, String> implements UserService {
     private UserRepository userRepository;
     private AccountRoleRepository accountRoleRepository;
     private ModelMapper modelMapper;
     private PasswordEncoder passwordEncoder;
     private RoleRepository roleRepository;
+    private AccountRepository accountRepository;
 
     /**
      * This method is used to get user by email
@@ -56,6 +60,7 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
      * @param email -Email of user
      * @return User response with response data
      */
+
     @Override
     public ResponseEntity<ResponseData<UserResponse>> findByEmailWithResponse(String email) {
         try {
@@ -73,6 +78,7 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
      * 
      * @return Users Response with list of user data
      */
+    @Override
     public ResponseEntity<UsersResponseList> getAllUser() {
         UsersResponseList usersResponseList = new UsersResponseList();
         List<UserResponse> userResponses = new ArrayList<>();
@@ -98,6 +104,7 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
      * @param id -ID of user
      * @return List of account role
      */
+    @Override
     public List<String> getAccountRole(String id) {
         List<AccountRole> accountRoles = accountRoleRepository.findByAccountId(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with id : " + id + NOT_FOUND));
@@ -105,6 +112,13 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
                 (list, accountRole) -> list.add(accountRole.getRole().getName()), ArrayList::addAll);
     }
 
+    /**
+     * This method is used to registration user
+     * 
+     * @param UserRequest -userRequest of user
+     * @return User Response with response data
+     */
+    @Override
     public ResponseEntity<ResponseData<User>> registration(UserRequest userRequest) {
         try {
             User user = new User();
@@ -133,6 +147,49 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
-
     }
+
+    /**
+     * This method is used to upload user data
+     * 
+     * @param UserProfileRequest -userRequest of user
+     * @return User Response
+     */
+    @Override
+    public void updateUserProfile(UserProfileRequest userProfileRequest) {
+        try {
+            User user = getById(userProfileRequest.getId());
+            user.setName(userProfileRequest.getName());
+            user.setEmail(userProfileRequest.getEmail());
+            user.setNumberPhone(userProfileRequest.getNumberPhone());
+            user.setBirthDate(userProfileRequest.getBirthDate());
+
+            userRepository.save(user);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    /**
+     * This method is used to update password user
+     * 
+     * @param UserPasswordRequestData -userPasswordRequestData of user
+     * @return User Response
+     */
+    @Override
+    public void updatePasswordUser(UserPasswordRequestData userPasswordRequestData) {
+        try {
+            User user = getById(userPasswordRequestData.getId());
+            Account account = user.getAccount();
+            if (userPasswordRequestData.getNewPassword() == userPasswordRequestData.getOldPassword()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "New password and old password cannot be same");
+            }
+            account.setPassword(passwordEncoder.encode(userPasswordRequestData.getNewPassword()));
+            accountRepository.save(account);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
 }

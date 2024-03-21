@@ -192,4 +192,14 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
         }
     }
 
+    @Override
+    public Boolean userPasswordCheck(String id, String password) {
+        try {
+            User user = getById(id);
+            return passwordEncoder.matches(password, user.getAccount().getPassword());
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
 }

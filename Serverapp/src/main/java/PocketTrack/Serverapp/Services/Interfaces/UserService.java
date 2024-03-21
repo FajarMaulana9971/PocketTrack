@@ -29,4 +29,6 @@ public interface UserService extends BaseServices<User, String> {
 
     void updatePasswordUser(UserPasswordRequestData userPasswordRequestData);
 
+    Boolean userPasswordCheck(String id, String password);
+
 }

@@ -32,10 +32,10 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
     private RoleRepository roleRepository;
     private AccountRoleRepository accountRoleRepository;
 
-    private ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData){
-        try{
+    private ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData) {
+        try {
             Optional<User> userCheck = userRepository.findByEmail(registerData.getEmail());
-            if(userCheck.isPresent()){
+            if (userCheck.isPresent()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email has already registered!");
             }
 
@@ -62,7 +62,8 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
 
             registerData.setPassword(null);
 
-            
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
     }
 }

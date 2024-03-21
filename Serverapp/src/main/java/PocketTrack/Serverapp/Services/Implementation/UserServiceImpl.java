@@ -192,6 +192,13 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
         }
     }
 
+    /**
+     * This method is used to check password user is match or not
+     * 
+     * @param id       -id of user
+     * @param password -password of user
+     * @return Boolean true or false
+     */
     @Override
     public Boolean userPasswordCheck(String id, String password) {
         try {

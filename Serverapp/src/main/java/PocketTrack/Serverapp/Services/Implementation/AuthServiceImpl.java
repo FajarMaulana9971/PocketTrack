@@ -3,6 +3,7 @@ package PocketTrack.Serverapp.Services.Implementation;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +14,7 @@ import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
+import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.AccountRepository;
 import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
@@ -31,6 +33,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
     private AccountRepository accountRepository;
     private RoleRepository roleRepository;
     private AccountRoleRepository accountRoleRepository;
+    private RedisTemplate<String, EmailRequest> sendUserEmail;
 
     private ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData) {
         try {
@@ -61,6 +64,16 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
             accountRoleRepository.save(accountRole);
 
             registerData.setPassword(null);
+
+            EmailRequest emailRequest = new EmailRequest();
+            emailRequest.setUserid(user.getId());
+            emailRequest.setName(user.getName());
+            emailRequest.setEmail(user.getEmail());
+            emailRequest.setSubject("Registration");
+            emailRequest.setCode(account.getVerificationCode());
+            sendUserEmail.convertAndSend("email", emailRequest);
+            return new ResponseEntity<>(new ResponseData<>(registerData, "Registration successfully"),
+                    HttpStatus.CREATED);
 
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());

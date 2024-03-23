@@ -14,8 +14,11 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import PocketTrack.Serverapp.Domains.Constants.ConstantVariables;
+import PocketTrack.Serverapp.Domains.Constants.ExceptionMessage;
 import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.User;
@@ -25,6 +28,11 @@ import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
+import PocketTrack.Serverapp.Domains.Models.Responses.RoleResponse;
+import PocketTrack.Serverapp.Domains.Models.Responses.ValidateTokenResponse;
+import PocketTrack.Serverapp.Exceptions.AuthorizationException;
+import PocketTrack.Serverapp.Exceptions.RequiredFieldIsMissingException;
+import PocketTrack.Serverapp.Exceptions.RequiredFieldNotValidException;
 import PocketTrack.Serverapp.Repositories.AccountRepository;
 import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
 import PocketTrack.Serverapp.Repositories.AccountStatusRepository;
@@ -254,5 +262,46 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return "Logout Success";
+    }
+
+    public ResponseEntity<ValidateTokenResponse> validateToken(String authorization) {
+        if (!StringUtils.hasText(authorization)) {
+            throw new RequiredFieldIsMissingException(ExceptionMessage.TOKEN_FOR_VALIDATE_IS_MISSING);
+        }
+
+        if (authorization.length() < 8) {
+            throw new RequiredFieldNotValidException(ExceptionMessage.BEARER_TOKEN_INVALID);
+        }
+
+        String token = "";
+        if (authorization.startsWith(ConstantVariables.BEARER)) {
+            token = authorization.substring(7);
+        }
+
+        if (Boolean.TRUE.equals(jwtUtil.isTokenExpired(token))) {
+            throw new AuthorizationException(ExceptionMessage.JWT_TOKEN_IS_EXPIRED);
+        }
+
+        ValidateTokenResponse validateTokenResponse = new ValidateTokenResponse();
+        if (!token.isBlank() && Boolean.TRUE.equals(jwtUtil.validateToken(token))) {
+            String username = jwtUtil.extractUsername(token);
+            User userDetails = userService.getUserByEmailOrUsername(username);
+
+            if (userDetails != null) {
+                List<RoleResponse> listRoles = new ArrayList<>();
+                List<AccountRole> userRoles = accountRoleRepository.findByAccountId(userDetails.getId());
+                userRoles.forEach(
+                        roles -> {
+                            RoleResponse roleResponses = new RoleResponse();
+                            roleResponses.setName(roles.getRole().getName());
+                            listRoles.add(roleResponses);
+                        });
+                validateTokenResponse.setId(userDetails.getId());
+                validateTokenResponse.setName(userDetails.getName());
+                validateTokenResponse.setEmail(userDetails.getEmail());
+                validateTokenResponse.setRoles(listRoles);
+            }
+        }
+        return new ResponseEntity<>(validateTokenResponse, HttpStatus.OK);
     }
 }

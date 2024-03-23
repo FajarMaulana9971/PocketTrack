@@ -31,4 +31,6 @@ public interface UserService extends BaseServices<User, String> {
 
     Boolean userPasswordCheck(String id, String password);
 
+    User getUserByEmailOrUsername(String name);
+
 }

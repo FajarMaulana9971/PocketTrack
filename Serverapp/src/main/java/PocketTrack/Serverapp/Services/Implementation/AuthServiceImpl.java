@@ -22,6 +22,7 @@ import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
 import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
+import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.AccountRepository;
@@ -166,6 +167,25 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
             emailRequest.setCode(account.getVerificationCode());
             sendUserEmail.convertAndSend("email", emailRequest);
             return new ResponseEntity<>(new ResponseData<>(Boolean.TRUE, "Email sent successfully"), HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    public ResponseEntity<ResponseData<Boolean>> resetPassword(PasswordRequest passwordRequest) {
+        try {
+            Account account = accountRepository.findByVerificationCode(passwordRequest.getVerificationCode());
+            if (account == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email is not registered");
+            }
+            if (!passwordEncoder.matches(passwordRequest.getOldPassword(), account.getPassword())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Old password is wrong");
+            }
+            account.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
+            account.setVerificationCode(null);
+            accountRepository.save(account);
+            return new ResponseEntity<>(new ResponseData<>(Boolean.TRUE, "Password changed successfully!"),
+                    HttpStatus.OK);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }

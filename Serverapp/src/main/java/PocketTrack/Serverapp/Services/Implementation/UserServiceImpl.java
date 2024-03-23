@@ -55,6 +55,17 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
     }
 
     /**
+     * This method is used to get user by email or username
+     * 
+     * @param name -Email or username of user
+     * @return User
+     */
+    @Override
+    public User getUserByEmailOrUsername(String name) {
+        return userRepository.findByEmailOrAccount_Username(name, name);
+    }
+
+    /**
      * This method is used to get user by email
      * 
      * @param email -Email of user

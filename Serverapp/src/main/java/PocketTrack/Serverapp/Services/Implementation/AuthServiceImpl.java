@@ -190,4 +190,26 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
     }
+
+    public LoginResponse refreshToken(String accessToken) {
+        try {
+            if (Boolean.FALSE.equals(jwtUtil.validateToken(accessToken))) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "invalid token");
+            }
+            if (Boolean.TRUE.equals(jwtUtil.isTokenExpired(accessToken))) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token is expired");
+            }
+
+            String subject = jwtUtil.extractUsername(accessToken);
+            String newAccessToken = jwtUtil.generateToken(accessToken, subject);
+            String expiredToken = jwtUtil.extractExpiration(newAccessToken).toString();
+
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setToken(newAccessToken);
+            loginResponse.setExpired(expiredToken);
+            return loginResponse;
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
 }

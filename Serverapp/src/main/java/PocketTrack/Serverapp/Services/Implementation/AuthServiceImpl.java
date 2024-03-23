@@ -22,6 +22,7 @@ import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
 import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
+import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.AccountRepository;
@@ -29,6 +30,7 @@ import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
 import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
+import PocketTrack.Serverapp.Services.Interfaces.UserService;
 import PocketTrack.Serverapp.Utilities.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
     private PasswordEncoder passwordEncoder;
     private AccountRepository accountRepository;
     private RoleRepository roleRepository;
+    private UserService userService;
     private AccountRoleRepository accountRoleRepository;
     private RedisTemplate<String, EmailRequest> sendUserEmail;
 
@@ -144,5 +147,47 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
                 .httpOnly(true)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+    public ResponseEntity<ResponseData<Boolean>> forgotPassword(String email) {
+        try {
+            User user = userService.getUserByEmail(email);
+            if (user == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email is not registered");
+            }
+            Account account = user.getAccount();
+            account.setVerificationCode(UUID.randomUUID().toString());
+            accountRepository.save(account);
+
+            EmailRequest emailRequest = new EmailRequest();
+            emailRequest.setUserid(user.getId());
+            emailRequest.setName(user.getName());
+            emailRequest.setEmail(user.getEmail());
+            emailRequest.setSubject("forgot-password");
+            emailRequest.setCode(account.getVerificationCode());
+            sendUserEmail.convertAndSend("email", emailRequest);
+            return new ResponseEntity<>(new ResponseData<>(Boolean.TRUE, "Email sent successfully"), HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    public ResponseEntity<ResponseData<Boolean>> resetPassword(PasswordRequest passwordRequest) {
+        try {
+            Account account = accountRepository.findByVerificationCode(passwordRequest.getVerificationCode());
+            if (account == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email is not registered");
+            }
+            if (!passwordEncoder.matches(passwordRequest.getOldPassword(), account.getPassword())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Old password is wrong");
+            }
+            account.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
+            account.setVerificationCode(null);
+            accountRepository.save(account);
+            return new ResponseEntity<>(new ResponseData<>(Boolean.TRUE, "Password changed successfully!"),
+                    HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
     }
 }

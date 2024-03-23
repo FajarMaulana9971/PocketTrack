@@ -29,6 +29,7 @@ import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
 import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
+import PocketTrack.Serverapp.Services.Interfaces.UserService;
 import PocketTrack.Serverapp.Utilities.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
     private PasswordEncoder passwordEncoder;
     private AccountRepository accountRepository;
     private RoleRepository roleRepository;
+    private UserService userService;
     private AccountRoleRepository accountRoleRepository;
     private RedisTemplate<String, EmailRequest> sendUserEmail;
 
@@ -144,5 +146,28 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
                 .httpOnly(true)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+    public ResponseEntity<ResponseData<Boolean>> forgotPassword(String email) {
+        try {
+            User user = userService.getUserByEmail(email);
+            if (user == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email is not registered");
+            }
+            Account account = user.getAccount();
+            account.setVerificationCode(UUID.randomUUID().toString());
+            accountRepository.save(account);
+
+            EmailRequest emailRequest = new EmailRequest();
+            emailRequest.setUserid(user.getId());
+            emailRequest.setName(user.getName());
+            emailRequest.setEmail(user.getEmail());
+            emailRequest.setSubject("forgot-password");
+            emailRequest.setCode(account.getVerificationCode());
+            sendUserEmail.convertAndSend("email", emailRequest);
+            return new ResponseEntity<>(new ResponseData<>(Boolean.TRUE, "Email sent successfully"), HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
     }
 }

@@ -230,4 +230,29 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
     }
+
+    public String logout(String accessToken, HttpServletResponse response) {
+        if (accessToken != null) {
+            ResponseCookie accessCookie = ResponseCookie.fromClientResponse("accessToken", "")
+                    .maxAge(0)
+                    .sameSite("None")
+                    .secure(true)
+                    .path("/")
+                    .httpOnly(true)
+                    .build();
+            response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+
+            ResponseCookie refreshCookie = ResponseCookie.fromClientResponse("refreshToken", "")
+                    .maxAge(0)
+                    .sameSite("None")
+                    .secure(true)
+                    .path("/")
+                    .httpOnly(true)
+                    .build();
+            response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        } else {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return "Logout Success";
+    }
 }

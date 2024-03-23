@@ -27,6 +27,7 @@ import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.AccountRepository;
 import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
+import PocketTrack.Serverapp.Repositories.AccountStatusRepository;
 import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
@@ -45,6 +46,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
     private RoleRepository roleRepository;
     private UserService userService;
     private AccountRoleRepository accountRoleRepository;
+    private AccountStatusRepository accountStatusRepository;
     private RedisTemplate<String, EmailRequest> sendUserEmail;
 
     public ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData) {
@@ -208,6 +210,22 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
             loginResponse.setToken(newAccessToken);
             loginResponse.setExpired(expiredToken);
             return loginResponse;
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    public ResponseEntity<ResponseData<String>> verification(String verificationCode) {
+        try {
+            Account account = accountRepository.findByVerificationCode(verificationCode);
+            if (account == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Verification code is not valid !");
+            }
+            account.setAccountStatus(accountStatusRepository.getReferenceById(1));
+            account.setVerificationCode(null);
+            accountRepository.save(account);
+            return new ResponseEntity<>(new ResponseData<>("Active", "Account verified successfully ! "),
+                    HttpStatus.OK);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }

@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -46,4 +47,7 @@ public class Account extends BaseEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "account_status_id", nullable = false)
+    private AccountStatus accountStatus;
 }

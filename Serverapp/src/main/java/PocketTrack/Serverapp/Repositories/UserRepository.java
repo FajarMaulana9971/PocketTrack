@@ -12,4 +12,6 @@ import PocketTrack.Serverapp.Repositories.Base.BaseRepositories;
 public interface UserRepository extends BaseRepositories<User, String> {
 
     Optional<User> findByEmail(@Param("email") String email);
+
+    User findByEmailOrAccount_Username(@Param("email") String email, @Param("username") String username);
 }

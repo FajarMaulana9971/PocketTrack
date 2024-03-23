@@ -1,10 +1,16 @@
 package PocketTrack.Serverapp.Services.Implementation;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,8 +19,10 @@ import org.springframework.web.server.ResponseStatusException;
 import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.User;
+import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
 import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
+import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.AccountRepository;
 import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
@@ -22,6 +30,7 @@ import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Utilities.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -35,7 +44,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
     private AccountRoleRepository accountRoleRepository;
     private RedisTemplate<String, EmailRequest> sendUserEmail;
 
-    private ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData) {
+    public ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData) {
         try {
             Optional<User> userCheck = userRepository.findByEmail(registerData.getEmail());
             if (userCheck.isPresent()) {
@@ -78,5 +87,62 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
+    }
+
+    public LoginResponse login(LoginData loginData, HttpServletResponse response) {
+        try {
+            User user = userRepository.findByEmailOrAccount_Username(loginData.getEmail(), loginData.getEmail());
+            if (user == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account is not registered");
+            }
+            if (!passwordEncoder.matches(loginData.getPassword(), user.getAccount().getPassword())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
+            }
+            if (user.getAccount().getAccountStatus().getId() != 1) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account is not active!");
+            }
+
+            String accessToken = jwtUtil.generateToken(createPayload(user), user.getEmail());
+            String refreshToken = jwtUtil.generateRefreshToken(createPayload(user), user.getEmail());
+            String expiredToken = jwtUtil.extractExpiration(accessToken).toString();
+            setTokenCookie("accessToken", accessToken, response);
+            setTokenCookie("refreshToken", refreshToken, response);
+
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setToken(accessToken);
+            loginResponse.setExpired(expiredToken);
+            loginResponse.setStatus(200);
+            return loginResponse;
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    public Map<String, Object> createPayload(User user) {
+        List<String> roles = new ArrayList<>();
+        if (user.getAccount().getAccountRoles() != null) {
+            for (AccountRole accountRole : user.getAccount().getAccountRoles()) {
+                roles.add(accountRole.getRole().getName());
+            }
+        }
+
+        Map<String, Object> claims = new LinkedHashMap<>();
+        claims.put("id", user.getId());
+        claims.put("name", user.getName());
+        claims.put("email", user.getEmail());
+        claims.put("username", user.getAccount().getUsername());
+        claims.put("role", roles);
+        return claims;
+    }
+
+    public void setTokenCookie(String type, String token, HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from(type, token)
+                .maxAge(604800)
+                .sameSite("none")
+                .secure(true)
+                .path("/")
+                .httpOnly(true)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserPasswordRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
-import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
@@ -22,8 +21,6 @@ public interface UserService extends BaseServices<User, String> {
     ResponseEntity<UsersResponseList> getAllUser();
 
     List<String> getAccountRole(String id);
-
-    ResponseEntity<ResponseData<User>> registration(UserRequest userRequest);
 
     void updateUserProfile(UserProfileRequest userProfileRequest);
 

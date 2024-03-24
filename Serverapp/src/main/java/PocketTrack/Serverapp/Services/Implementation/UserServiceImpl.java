@@ -123,43 +123,6 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
     }
 
     /**
-     * This method is used to registration user
-     * 
-     * @param UserRequest -userRequest of user
-     * @return User Response with response data
-     */
-    @Override
-    public ResponseEntity<ResponseData<User>> registration(UserRequest userRequest) {
-        try {
-            User user = new User();
-            user.setName(userRequest.getName());
-            user.setEmail(userRequest.getEmail());
-            user.setNumberPhone(userRequest.getNumberPhone());
-            user.setBirthDate(userRequest.getBirthDate());
-            user.setGender(userRequest.getGender());
-
-            Account account = new Account();
-            account.setUsername(userRequest.getUsername());
-            account.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-            account.setVerificationCode(UUID.randomUUID().toString());
-            account.setUser(user);
-
-            user.setAccount(account);
-            userRepository.save(user);
-
-            AccountRole accountRole = new AccountRole();
-            accountRole.setRole(roleRepository.findByName("ROLE_USER"));
-            accountRole.setAccount(account);
-            accountRoleRepository.save(accountRole);
-
-            return new ResponseEntity<>(new ResponseData<>(getById(user.getId()), "User" + SUCCESSFULLY_CREATED),
-                    HttpStatus.OK);
-        } catch (ResponseStatusException e) {
-            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
-        }
-    }
-
-    /**
      * This method is used to upload user data
      * 
      * @param UserProfileRequest -userRequest of user

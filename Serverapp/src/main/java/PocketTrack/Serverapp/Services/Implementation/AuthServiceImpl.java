@@ -58,6 +58,12 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
     private AccountStatusRepository accountStatusRepository;
     private RedisTemplate<String, EmailRequest> sendUserEmail;
 
+    /**
+     * This method is used to register a new user
+     * 
+     * @param data - Request body of register data
+     * @return Register with response data
+     */
     @Override
     public ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData) {
         try {
@@ -104,6 +110,13 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         }
     }
 
+    /**
+     * This method is used to log in a user
+     * 
+     * @param data     - Request body of login data
+     * @param response - Response of http servlet
+     * @return Login response with token and expired token
+     */
     @Override
     public LoginResponse login(LoginData loginData, HttpServletResponse response) {
         try {
@@ -134,6 +147,12 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         }
     }
 
+    /**
+     * This method is used to create payload
+     * 
+     * @param user - User of user
+     * @return Map of string and object
+     */
     @Override
     public Map<String, Object> createPayload(User user) {
         List<String> roles = new ArrayList<>();
@@ -152,6 +171,13 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         return claims;
     }
 
+    /**
+     * This method is used to set token to cookie
+     * 
+     * @param type     - Type of token (access, refresh)
+     * @param token    - Token of user
+     * @param response - Response of http servlet
+     */
     @Override
     public void setTokenCookie(String type, String token, HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from(type, token)
@@ -164,6 +190,12 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
+    /**
+     * This method is used to forgot password
+     * 
+     * @param email - Email of user
+     * @return Boolean of forgot password
+     */
     @Override
     public ResponseEntity<ResponseData<Boolean>> forgotPassword(String email) {
         try {
@@ -188,6 +220,12 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         }
     }
 
+    /**
+     * This method is used to change password
+     * 
+     * @param passwordRequest - Request body of password request
+     * @return Account with response data
+     */
     @Override
     public ResponseEntity<ResponseData<Boolean>> resetPassword(PasswordRequest passwordRequest) {
         try {
@@ -208,6 +246,12 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         }
     }
 
+    /**
+     * This method is used to refresh token
+     * 
+     * @param accessToken - Access token of user
+     * @return Login response with token and expired token
+     */
     @Override
     public LoginResponse refreshToken(String accessToken) {
         try {
@@ -231,6 +275,12 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         }
     }
 
+    /**
+     * This method is used to verification
+     * 
+     * @param verificationCode - Verification code of user
+     * @return Account with response data
+     */
     @Override
     public ResponseEntity<ResponseData<String>> verification(String verificationCode) {
         try {
@@ -248,6 +298,13 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         }
     }
 
+    /**
+     * This method is used to log out a user
+     * 
+     * @param accessToken - Access token of user
+     * @param response    - Response of http servlet
+     * @return String of logout
+     */
     @Override
     public String logout(String accessToken, HttpServletResponse response) {
         if (accessToken != null) {
@@ -274,6 +331,12 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         return "Logout Success";
     }
 
+    /**
+     * This method is used to validate token
+     * 
+     * @param authorization - Authorization of user
+     * @return Validate token with response data
+     */
     @Override
     public ResponseEntity<ValidateTokenResponse> validateToken(String authorization) {
         if (!StringUtils.hasText(authorization)) {

@@ -117,8 +117,7 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
      */
     @Override
     public List<String> getAccountRole(String id) {
-        List<AccountRole> accountRoles = accountRoleRepository.findByAccountId(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with id : " + id + NOT_FOUND));
+        List<AccountRole> accountRoles = accountRoleRepository.findByAccountId(id);
         return accountRoles.stream().collect(ArrayList::new,
                 (list, accountRole) -> list.add(accountRole.getRole().getName()), ArrayList::addAll);
     }

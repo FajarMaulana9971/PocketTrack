@@ -39,6 +39,7 @@ import PocketTrack.Serverapp.Repositories.AccountStatusRepository;
 import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
+import PocketTrack.Serverapp.Services.Interfaces.AuthService;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
 import PocketTrack.Serverapp.Utilities.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -46,7 +47,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl extends BaseServicesImpl<User, String> {
+public class AuthServiceImpl extends BaseServicesImpl<User, String> implements AuthService {
     private JwtUtil jwtUtil;
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
@@ -57,6 +58,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
     private AccountStatusRepository accountStatusRepository;
     private RedisTemplate<String, EmailRequest> sendUserEmail;
 
+    @Override
     public ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData) {
         try {
             Optional<User> userCheck = userRepository.findByEmail(registerData.getEmail());
@@ -102,6 +104,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         }
     }
 
+    @Override
     public LoginResponse login(LoginData loginData, HttpServletResponse response) {
         try {
             User user = userRepository.findByEmailOrAccount_Username(loginData.getEmail(), loginData.getEmail());
@@ -131,6 +134,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         }
     }
 
+    @Override
     public Map<String, Object> createPayload(User user) {
         List<String> roles = new ArrayList<>();
         if (user.getAccount().getAccountRoles() != null) {
@@ -148,6 +152,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         return claims;
     }
 
+    @Override
     public void setTokenCookie(String type, String token, HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from(type, token)
                 .maxAge(604800)
@@ -159,6 +164,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
+    @Override
     public ResponseEntity<ResponseData<Boolean>> forgotPassword(String email) {
         try {
             User user = userService.getUserByEmail(email);
@@ -182,6 +188,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         }
     }
 
+    @Override
     public ResponseEntity<ResponseData<Boolean>> resetPassword(PasswordRequest passwordRequest) {
         try {
             Account account = accountRepository.findByVerificationCode(passwordRequest.getVerificationCode());
@@ -201,6 +208,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         }
     }
 
+    @Override
     public LoginResponse refreshToken(String accessToken) {
         try {
             if (Boolean.FALSE.equals(jwtUtil.validateToken(accessToken))) {
@@ -223,6 +231,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         }
     }
 
+    @Override
     public ResponseEntity<ResponseData<String>> verification(String verificationCode) {
         try {
             Account account = accountRepository.findByVerificationCode(verificationCode);
@@ -239,6 +248,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         }
     }
 
+    @Override
     public String logout(String accessToken, HttpServletResponse response) {
         if (accessToken != null) {
             ResponseCookie accessCookie = ResponseCookie.fromClientResponse("accessToken", "")
@@ -264,6 +274,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> {
         return "Logout Success";
     }
 
+    @Override
     public ResponseEntity<ValidateTokenResponse> validateToken(String authorization) {
         if (!StringUtils.hasText(authorization)) {
             throw new RequiredFieldIsMissingException(ExceptionMessage.TOKEN_FOR_VALIDATE_IS_MISSING);

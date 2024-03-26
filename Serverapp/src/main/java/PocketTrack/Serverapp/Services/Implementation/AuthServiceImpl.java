@@ -43,10 +43,10 @@ import PocketTrack.Serverapp.Services.Interfaces.AuthService;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
 import PocketTrack.Serverapp.Utilities.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class AuthServiceImpl extends BaseServicesImpl<User, String> implements AuthService {
     private JwtUtil jwtUtil;
     private UserRepository userRepository;

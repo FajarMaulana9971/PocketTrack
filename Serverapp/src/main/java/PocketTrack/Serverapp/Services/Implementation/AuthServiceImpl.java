@@ -134,8 +134,8 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             String accessToken = jwtUtil.generateToken(createPayload(user), user.getEmail());
             String refreshToken = jwtUtil.generateRefreshToken(createPayload(user), user.getEmail());
             String expiredToken = jwtUtil.extractExpiration(accessToken).toString();
-            setTokenCookie("accessToken", accessToken, response);
-            setTokenCookie("refreshToken", refreshToken, response);
+            setTokenToCookie("accessToken", accessToken, response);
+            setTokenToCookie("refreshToken", refreshToken, response);
 
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setToken(accessToken);
@@ -179,10 +179,10 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
      * @param response - Response of http servlet
      */
     @Override
-    public void setTokenCookie(String type, String token, HttpServletResponse response) {
+    public void setTokenToCookie(String type, String token, HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from(type, token)
                 .maxAge(604800)
-                .sameSite("none")
+                .sameSite("None")
                 .secure(true)
                 .path("/")
                 .httpOnly(true)

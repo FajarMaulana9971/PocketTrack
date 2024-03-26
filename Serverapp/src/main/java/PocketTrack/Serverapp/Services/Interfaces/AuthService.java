@@ -21,7 +21,7 @@ public interface AuthService extends BaseServices<User, String> {
 
     Map<String, Object> createPayload(User user);
 
-    void setTokenCookie(String type, String token, HttpServletResponse response);
+    void setTokenToCookie(String type, String token, HttpServletResponse response);
 
     ResponseEntity<ResponseData<Boolean>> forgotPassword(String email);
 

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,9 +19,12 @@ import org.springframework.web.server.ResponseStatusException;
 import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.User;
+import PocketTrack.Serverapp.Domains.Entities.Redis.UserRoleRequest;
+import PocketTrack.Serverapp.Domains.Models.Requests.UserEmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserPasswordRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
+import PocketTrack.Serverapp.Domains.Models.Requests.UserRoleRequestData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
@@ -41,6 +45,7 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
     private PasswordEncoder passwordEncoder;
     private RoleRepository roleRepository;
     private AccountRepository accountRepository;
+    private RedisTemplate<String, UserRoleRequestData> updateUserRole;
 
     /**
      * This method is used to get user by email
@@ -177,6 +182,52 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
         try {
             User user = getById(id);
             return passwordEncoder.matches(password, user.getAccount().getPassword());
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    /**
+     * This method is used to update user role
+     * 
+     * @param userRoleRequest - Request body of user role
+     */
+    @Override
+    public void updateUserRole(UserRoleRequest userRoleRequest) {
+        try {
+            User user = getUserByEmail(userRoleRequest.getEmail());
+            Account account = user.getAccount();
+            accountRoleRepository.deleteAll(account.getAccountRoles());
+
+            List<AccountRole> accountRoles = new ArrayList<>();
+            for (String role : userRoleRequest.getRoles()) {
+                AccountRole userAccountRole = accountRoleRepository.findByAccountAndRoleId(account, role);
+                if (userAccountRole == null) {
+                    AccountRole accountRole = new AccountRole();
+                    accountRole.setAccount(account);
+                    accountRole.setRole(roleRepository.findByName(role));
+                    accountRoleRepository.save(accountRole);
+                    accountRoles.add(accountRole);
+                }
+            }
+            account.setAccountRoles(accountRoles);
+            accountRepository.save(account);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    /**
+     * This method is used to update user email
+     * 
+     * @param userEmailRequest - Request body of user email
+     */
+    @Override
+    public void updateUserEmail(UserEmailRequest userEmailRequest) {
+        try {
+            User user = getUserByEmail(userEmailRequest.getOldEmail());
+            user.setEmail(userEmailRequest.getNewEmail());
+            userRepository.save(user);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }

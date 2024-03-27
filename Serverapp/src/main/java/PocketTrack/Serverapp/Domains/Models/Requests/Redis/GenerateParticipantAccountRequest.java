@@ -1,4 +1,4 @@
-package PocketTrack.Serverapp.Domains.Entities.Redis;
+package PocketTrack.Serverapp.Domains.Models.Requests.Redis;
 
 import lombok.Data;
 

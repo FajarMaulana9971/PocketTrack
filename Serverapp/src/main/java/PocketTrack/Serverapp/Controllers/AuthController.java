@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import PocketTrack.Serverapp.Domains.Models.ErrorData;
@@ -65,6 +66,11 @@ public class AuthController {
     @PostMapping("verification/{verificationCode}")
     public ResponseEntity<?> verification(@PathVariable String verificationCode) {
         return authService.verification(verificationCode);
+    }
+
+    @PostMapping("validate-token")
+    public ResponseEntity<?> validateToken(@RequestHeader("authorization") String authorization) {
+        return authService.validateToken(authorization);
     }
 
 }

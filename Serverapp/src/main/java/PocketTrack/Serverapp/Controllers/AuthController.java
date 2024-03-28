@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import PocketTrack.Serverapp.Domains.Models.ErrorData;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
+import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Services.Interfaces.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -54,6 +55,11 @@ public class AuthController {
     @PostMapping("forgot-password/{email}")
     public ResponseEntity<?> forgotPassword(@PathVariable String email) {
         return authService.forgotPassword(email);
+    }
+
+    @PostMapping("reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordRequest passwordRequest) {
+        return authService.resetPassword(passwordRequest);
     }
 
 }

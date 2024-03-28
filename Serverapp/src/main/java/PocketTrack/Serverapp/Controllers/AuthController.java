@@ -62,4 +62,9 @@ public class AuthController {
         return authService.resetPassword(passwordRequest);
     }
 
+    @PostMapping("verification/{verificationCode}")
+    public ResponseEntity<?> verification(@PathVariable String verificationCode) {
+        return authService.verification(verificationCode);
+    }
+
 }

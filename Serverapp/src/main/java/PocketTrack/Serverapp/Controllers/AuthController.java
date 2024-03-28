@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +49,11 @@ public class AuthController {
     @PostMapping("logging-out")
     public String logout(@CookieValue(value = "accessToken") String accessToken, HttpServletResponse response) {
         return authService.logout(accessToken, response);
+    }
+
+    @PostMapping("forgot-password/{email}")
+    public ResponseEntity<?> forgotPassword(@PathVariable String email) {
+        return authService.forgotPassword(email);
     }
 
 }

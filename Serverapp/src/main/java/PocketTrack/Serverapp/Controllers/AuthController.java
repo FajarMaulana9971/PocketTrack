@@ -45,4 +45,9 @@ public class AuthController {
         return authService.refreshToken(accessToken);
     }
 
+    @PostMapping("logging-out")
+    public String logout(@CookieValue(value = "accessToken") String accessToken, HttpServletResponse response) {
+        return authService.logout(accessToken, response);
+    }
+
 }

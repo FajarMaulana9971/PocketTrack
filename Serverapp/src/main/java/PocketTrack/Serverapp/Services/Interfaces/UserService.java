@@ -23,6 +23,8 @@ public interface UserService extends BaseServices<User, String> {
 
     ResponseEntity<UsersResponseList> getAllUser();
 
+    String userCheck(String email);
+
     List<String> getAccountRole(String id);
 
     void updateUserProfile(UserProfileRequest userProfileRequest);

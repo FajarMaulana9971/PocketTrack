@@ -6,6 +6,7 @@ import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULL
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -68,6 +69,26 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
     @Override
     public User getUserByEmailOrUsername(String name) {
         return userRepository.findByEmailOrAccount_Username(name, name);
+    }
+
+    /**
+     * This method is used to check user
+     * 
+     * @param email -Email of user
+     * @return String of user account status
+     */
+    @Override
+    public String userCheck(String email) {
+        try {
+            Optional<User> user = userRepository.findByEmail(email);
+            if (user.isPresent()) {
+                return user.get().getAccount().getAccountStatus().getName();
+            } else {
+                return "Unregistered";
+            }
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
     }
 
     /**

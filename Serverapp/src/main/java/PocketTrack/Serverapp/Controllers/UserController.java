@@ -17,4 +17,9 @@ public class UserController {
     public ResponseEntity<?> getUserByEmail(@PathVariable("email") String email) {
         return userService.findByEmailWithResponse(email);
     }
+
+    @GetMapping("admin/users/{email}/check")
+    public String userCheck(@PathVariable("email") String email) {
+        return userService.userCheck(email);
+    }
 }

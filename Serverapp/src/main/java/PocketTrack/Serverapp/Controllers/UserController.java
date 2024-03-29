@@ -22,4 +22,9 @@ public class UserController {
     public String userCheck(@PathVariable("email") String email) {
         return userService.userCheck(email);
     }
+
+    @GetMapping("admin/users")
+    public ResponseEntity<?> getUsers() {
+        return userService.getAllUser();
+    }
 }

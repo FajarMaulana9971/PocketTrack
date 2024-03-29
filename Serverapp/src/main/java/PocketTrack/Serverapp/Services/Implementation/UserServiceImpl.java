@@ -26,6 +26,7 @@ import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRoleRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.Redis.UserRoleRequest;
+import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
@@ -150,6 +151,16 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
         usersResponseList.setUserResponsesList(userResponses);
         return new ResponseEntity<>(usersResponseList, HttpStatus.OK);
     }
+
+    // public ObjectResponseData<UserResponse> getAllUserWithPagination(String
+    // authorization, String keywoard, int page, int size){
+    // if(page > 0)
+    // page = page - 1;
+
+    // try{
+    // UsersResponseList users = getAllUser(authorization).get
+    // }
+    // }
 
     /**
      * This method is used to get account role

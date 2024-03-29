@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
 import lombok.AllArgsConstructor;
 
@@ -23,11 +24,6 @@ public class UserController {
         return userService.userCheck(email);
     }
 
-    @GetMapping("admin/users")
-    public ResponseEntity<?> getUsers() {
-        return userService.getAllUser();
-    }
-
     @GetMapping("public/users")
     public Boolean userEmailCheck(@PathVariable("email") String email) {
         return userService.userEmailCheck(email);
@@ -42,4 +38,5 @@ public class UserController {
     public ResponseEntity<?> getUserById(@PathVariable String id) {
         return userService.getByIdWithResponse(id);
     }
+
 }

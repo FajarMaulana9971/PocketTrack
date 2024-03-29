@@ -92,6 +92,22 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
     }
 
     /**
+     * This method is used to check user for public
+     * 
+     * @param email -Email of user
+     * @return String of user account status
+     */
+    @Override
+    public Boolean userEmailCheck(String email) {
+        try {
+            Optional<User> user = userRepository.findByEmail(email);
+            return user.isPresent();
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    /**
      * This method is used to get user by email
      * 
      * @param email -Email of user

@@ -32,4 +32,9 @@ public class UserController {
     public Boolean userEmailCheck(@PathVariable("email") String email) {
         return userService.userEmailCheck(email);
     }
+
+    @GetMapping("public/users/{id}/password/{password}/check")
+    public Boolean userPasswordCheck(@PathVariable("id") String id, @PathVariable("password") String password) {
+        return userService.userPasswordCheck(id, password);
+    }
 }

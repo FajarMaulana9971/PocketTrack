@@ -37,4 +37,9 @@ public class UserController {
     public Boolean userPasswordCheck(@PathVariable("id") String id, @PathVariable("password") String password) {
         return userService.userPasswordCheck(id, password);
     }
+
+    @GetMapping("admin/users/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable String id) {
+        return userService.getByIdWithResponse(id);
+    }
 }

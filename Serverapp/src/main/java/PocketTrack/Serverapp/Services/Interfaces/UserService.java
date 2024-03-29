@@ -25,6 +25,8 @@ public interface UserService extends BaseServices<User, String> {
 
     String userCheck(String email);
 
+    Boolean userEmailCheck(String email);
+
     List<String> getAccountRole(String id);
 
     void updateUserProfile(UserProfileRequest userProfileRequest);

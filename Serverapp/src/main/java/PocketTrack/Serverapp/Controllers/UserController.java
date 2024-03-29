@@ -27,4 +27,9 @@ public class UserController {
     public ResponseEntity<?> getUsers() {
         return userService.getAllUser();
     }
+
+    @GetMapping("public/users")
+    public Boolean userEmailCheck(@PathVariable("email") String email) {
+        return userService.userEmailCheck(email);
+    }
 }

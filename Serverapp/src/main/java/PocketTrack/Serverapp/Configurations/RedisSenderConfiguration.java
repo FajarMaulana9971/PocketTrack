@@ -9,6 +9,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import PocketTrack.Serverapp.Domains.Models.UserData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserEmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRoleRequestData;
@@ -50,18 +51,17 @@ public class RedisSenderConfiguration {
         return redisTemplate;
     }
 
-    // @Bean
-    // RedisTemplate<String, UserData> updateUserProfile() {
-    // ObjectMapper objectMapper = new ObjectMapper();
-    // objectMapper.registerModule(new JavaTimeModule());
+    @Bean
+    RedisTemplate<String, UserData> updateUserProfile() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
 
-    // RedisTemplate<String, UserData> redisTemplate = new RedisTemplate<>();
-    // redisTemplate.setConnectionFactory(lettuceConnectionFactory);
-    // redisTemplate.setValueSerializer(new
-    // Jackson2JsonRedisSerializer<>(objectMapper, UserData.class));
-    // redisTemplate.setEnableTransactionSupport(true);
-    // return redisTemplate;
-    // }
+        RedisTemplate<String, UserData> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapper, UserData.class));
+        redisTemplate.setEnableTransactionSupport(true);
+        return redisTemplate;
+    }
 
     // @Bean
     // RedisTemplate<String, UserEmailRequest> updateUserEmail() {

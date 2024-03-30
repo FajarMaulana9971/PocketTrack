@@ -14,6 +14,7 @@ import PocketTrack.Serverapp.Domains.Models.Requests.UserEmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRoleRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserStatusRequestData;
+import PocketTrack.Serverapp.Domains.Models.Requests.Redis.UserPasswordRequestData;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -72,14 +73,12 @@ public class RedisSenderConfiguration {
         return redisTemplate;
     }
 
-    // @Bean
-    // RedisTemplate<String, UserPasswordRequestData> updateUserPassword() {
-    // RedisTemplate<String, UserPasswordRequestData> redisTemplate = new
-    // RedisTemplate<>();
-    // redisTemplate.setConnectionFactory(lettuceConnectionFactory);
-    // redisTemplate.setValueSerializer(new
-    // Jackson2JsonRedisSerializer<>(UserPasswordRequestData.class));
-    // redisTemplate.setEnableTransactionSupport(true);
-    // return redisTemplate;
-    // }
+    @Bean
+    RedisTemplate<String, UserPasswordRequestData> updateUserPassword() {
+        RedisTemplate<String, UserPasswordRequestData> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(UserPasswordRequestData.class));
+        redisTemplate.setEnableTransactionSupport(true);
+        return redisTemplate;
+    }
 }

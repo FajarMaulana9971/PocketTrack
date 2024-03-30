@@ -10,6 +10,7 @@ import PocketTrack.Serverapp.Domains.Models.Requests.UserPasswordRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRoleRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.Redis.UserRoleRequest;
+import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
@@ -21,7 +22,7 @@ public interface UserService extends BaseServices<User, String> {
 
     ResponseEntity<ResponseData<UserResponse>> findByEmailWithResponse(String email);
 
-    ResponseEntity<UsersResponseList> getAllUser();
+    ObjectResponseData<UserResponse> getAllUserWithPagination(String keywoard, int page, int size);
 
     String userCheck(String email);
 

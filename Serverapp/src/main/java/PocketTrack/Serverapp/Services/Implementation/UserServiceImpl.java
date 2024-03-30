@@ -139,8 +139,7 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
      * 
      * @return Users Response with list of user data
      */
-    @Override
-    public ResponseEntity<UsersResponseList> getAllUser() {
+    public ResponseEntity<UsersResponseList> getAllUserList() {
         UsersResponseList usersResponseList = new UsersResponseList();
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : userRepository.findAll()) {
@@ -159,12 +158,21 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
         return new ResponseEntity<>(usersResponseList, HttpStatus.OK);
     }
 
+    /**
+     * This method is used to get all user list for admin page
+     * 
+     * @param keyword - keyword for search
+     * @param page    - page number
+     * @param size    - size of page
+     * @return List of user with pagination
+     */
+    @Override
     public ObjectResponseData<UserResponse> getAllUserWithPagination(String keywoard, int page, int size) {
         if (page > 0)
             page = page - 1;
 
         try {
-            UsersResponseList users = getAllUser().getBody();
+            UsersResponseList users = getAllUserList().getBody();
             if (users == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Registered user is not found");
             }

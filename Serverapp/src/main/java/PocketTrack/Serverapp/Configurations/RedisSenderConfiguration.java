@@ -12,6 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserEmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRoleRequestData;
+import PocketTrack.Serverapp.Domains.Models.Requests.UserStatusRequestData;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -31,16 +32,14 @@ public class RedisSenderConfiguration {
         return redisTemplate;
     }
 
-    // @Bean
-    // RedisTemplate<String, UserStatusRequestData> updateUserStatus() {
-    // RedisTemplate<String, UserStatusRequestData> redisTemplate = new
-    // RedisTemplate<>();
-    // redisTemplate.setConnectionFactory(lettuceConnectionFactory);
-    // redisTemplate.setValueSerializer(new
-    // Jackson2JsonRedisSerializer<>(UserStatusRequestData.class));
-    // redisTemplate.setEnableTransactionSupport(true);
-    // return redisTemplate;
-    // }
+    @Bean
+    RedisTemplate<String, UserStatusRequestData> updateUserStatus() {
+        RedisTemplate<String, UserStatusRequestData> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(UserStatusRequestData.class));
+        redisTemplate.setEnableTransactionSupport(true);
+        return redisTemplate;
+    }
 
     // @Bean
     // RedisTemplate<String, UserRoleRequestData> updateUserRole() {

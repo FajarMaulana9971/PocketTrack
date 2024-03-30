@@ -41,16 +41,14 @@ public class RedisSenderConfiguration {
         return redisTemplate;
     }
 
-    // @Bean
-    // RedisTemplate<String, UserRoleRequestData> updateUserRole() {
-    // RedisTemplate<String, UserRoleRequestData> redisTemplate = new
-    // RedisTemplate<>();
-    // redisTemplate.setConnectionFactory(lettuceConnectionFactory);
-    // redisTemplate.setValueSerializer(new
-    // Jackson2JsonRedisSerializer<>(UserRoleRequestData.class));
-    // redisTemplate.setEnableTransactionSupport(true);
-    // return redisTemplate;
-    // }
+    @Bean
+    RedisTemplate<String, UserRoleRequestData> updateUserRole() {
+        RedisTemplate<String, UserRoleRequestData> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(UserRoleRequestData.class));
+        redisTemplate.setEnableTransactionSupport(true);
+        return redisTemplate;
+    }
 
     // @Bean
     // RedisTemplate<String, UserData> updateUserProfile() {

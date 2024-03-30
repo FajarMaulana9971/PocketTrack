@@ -63,16 +63,14 @@ public class RedisSenderConfiguration {
         return redisTemplate;
     }
 
-    // @Bean
-    // RedisTemplate<String, UserEmailRequest> updateUserEmail() {
-    // RedisTemplate<String, UserEmailRequest> redisTemplate = new
-    // RedisTemplate<>();
-    // redisTemplate.setConnectionFactory(lettuceConnectionFactory);
-    // redisTemplate.setValueSerializer(new
-    // Jackson2JsonRedisSerializer<>(UserEmailRequest.class));
-    // redisTemplate.setEnableTransactionSupport(true);
-    // return redisTemplate;
-    // }
+    @Bean
+    RedisTemplate<String, UserEmailRequest> updateUserEmail() {
+        RedisTemplate<String, UserEmailRequest> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(UserEmailRequest.class));
+        redisTemplate.setEnableTransactionSupport(true);
+        return redisTemplate;
+    }
 
     // @Bean
     // RedisTemplate<String, UserPasswordRequestData> updateUserPassword() {

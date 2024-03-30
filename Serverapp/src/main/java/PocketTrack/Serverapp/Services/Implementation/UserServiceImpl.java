@@ -10,6 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.User;
+import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserEmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserPasswordRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
@@ -36,6 +41,7 @@ import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
+import PocketTrack.Serverapp.Utilities.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -48,6 +54,7 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
     private RoleRepository roleRepository;
     private AccountRepository accountRepository;
     private RedisTemplate<String, UserRoleRequestData> updateUserRole;
+    private PaginationUtil paginationUtil;
 
     /**
      * This method is used to get user by email
@@ -152,15 +159,34 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
         return new ResponseEntity<>(usersResponseList, HttpStatus.OK);
     }
 
-    // public ObjectResponseData<UserResponse> getAllUserWithPagination(String
-    // authorization, String keywoard, int page, int size){
-    // if(page > 0)
-    // page = page - 1;
+    public ObjectResponseData<UserResponse> getAllUserWithPagination(String keywoard, int page, int size) {
+        if (page > 0)
+            page = page - 1;
 
-    // try{
-    // UsersResponseList users = getAllUser(authorization).get
-    // }
-    // }
+        try {
+            UsersResponseList users = getAllUser().getBody();
+            if (users == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Registered user is not found");
+            }
+            List<UserResponse> userResponses = new ArrayList<>();
+            users.getUserResponsesList().forEach(user -> {
+                UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+                List<String> roles = new ArrayList<>();
+                user.getRoles().forEach(role -> {
+                    role = role.replace("ROLE_", "").replace("_", "");
+                    roles.add(role);
+                });
+                userResponse.setRoles(roles);
+                userResponses.add(userResponse);
+            });
+            Pageable pageable = PageRequest.of(page, size);
+            Page<UserResponse> userList = new PageImpl<>(userResponses, pageable, userResponses.size());
+            PageData pagination = paginationUtil.setPageData(page, size, (int) userList.getTotalElements());
+            return new ObjectResponseData<>(userList.getContent(), pagination);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
 
     /**
      * This method is used to get account role

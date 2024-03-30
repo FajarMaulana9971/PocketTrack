@@ -19,7 +19,7 @@ import lombok.AllArgsConstructor;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("admin/users/{email/email}")
+    @GetMapping("admin/users/{email}/email")
     public ResponseEntity<?> getUserByEmail(@PathVariable("email") String email) {
         return userService.findByEmailWithResponse(email);
     }

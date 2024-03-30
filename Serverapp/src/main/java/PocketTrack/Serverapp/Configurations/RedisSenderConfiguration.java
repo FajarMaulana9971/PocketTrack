@@ -2,6 +2,7 @@ package PocketTrack.Serverapp.Configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import PocketTrack.Serverapp.Domains.Models.UserData;
+import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserEmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRoleRequestData;
@@ -80,5 +82,12 @@ public class RedisSenderConfiguration {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(UserPasswordRequestData.class));
         redisTemplate.setEnableTransactionSupport(true);
         return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, EmailRequest> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, EmailRequest> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        return template;
     }
 }

@@ -58,6 +58,16 @@ public class RedisReceiverConfiguration {
         return messageListenerAdapter;
     }
 
+    // @Bean("updateUserStatusMessageListener")
+    // MessageListenerAdapter updateUserStatusMessageListener(AuthReceiver receiver)
+    // {
+    // MessageListenerAdapter messageListenerAdapter = new
+    // MessageListenerAdapter(receiver);
+    // messageListenerAdapter.setSerializer(new
+    // Jackson2JsonRedisSerializer<>(UserStatusRequest.class));
+    // return messageListenerAdapter;
+    // }
+
     @Bean("updateUserProfileMessageListener")
     MessageListenerAdapter updateUserProfileListenerAdapter(AuthReceiver receiver) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -120,8 +130,8 @@ public class RedisReceiverConfiguration {
     @Bean
     RedisMessageListenerContainer redisContainer(
             @Qualifier("registerMessageListener") MessageListenerAdapter registerListenerAdapter,
-            @Qualifier("generateParticipantAccountMessageListener") MessageListenerAdapter generateParticipantAccountMessageListener,
-            @Qualifier("updateUserStatusMessageListener") MessageListenerAdapter updateUserStatusMessageListener,
+            // @Qualifier("updateUserStatusMessageListener") MessageListenerAdapter
+            // updateUserStatusMessageListener,
             @Qualifier("updateUserRoleMessageListener") MessageListenerAdapter updateUserRoleMessageListener,
             @Qualifier("updateUserProfileMessageListener") MessageListenerAdapter updateUserProfileListenerAdapter,
             @Qualifier("updateUserEmailMessageListener") MessageListenerAdapter updateUserEmailMessageListener,
@@ -130,10 +140,8 @@ public class RedisReceiverConfiguration {
         container.setConnectionFactory(lettuceConnectionFactory());
         container.addMessageListener(registerListenerAdapter,
                 channelTopicRegister());
-        container.addMessageListener(generateParticipantAccountMessageListener,
-                channelTopicGenerateParticipantAccount());
-        container.addMessageListener(updateUserStatusMessageListener,
-                channelTopicUpdateUserStatus());
+        // container.addMessageListener(updateUserStatusMessageListener,
+        // channelTopicUpdateUserStatus());
         container.addMessageListener(updateUserRoleMessageListener,
                 channelTopicUpdateUserRole());
         container.addMessageListener(updateUserProfileListenerAdapter,

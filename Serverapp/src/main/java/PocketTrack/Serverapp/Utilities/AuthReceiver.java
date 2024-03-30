@@ -6,7 +6,6 @@ import PocketTrack.Serverapp.Domains.Models.RegisterData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserEmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserPasswordRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
-import PocketTrack.Serverapp.Domains.Models.Requests.Redis.GenerateParticipantAccountRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.Redis.UserRoleRequest;
 import PocketTrack.Serverapp.Services.Implementation.AuthServiceImpl;
 import PocketTrack.Serverapp.Services.Implementation.UserServiceImpl;

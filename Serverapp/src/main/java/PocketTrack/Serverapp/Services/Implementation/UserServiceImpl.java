@@ -3,6 +3,7 @@ package PocketTrack.Serverapp.Services.Implementation;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.NOT_FOUND;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_CREATED;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_RETRIEVED;
+import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_UPDATED;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -215,16 +216,16 @@ public class UserServiceImpl extends BaseServicesImpl<User, String> implements U
      * @param UserProfileRequest -userRequest of user
      * @return User Response
      */
-    @Override
-    public void updateUserProfile(UserProfileRequest userProfileRequest) {
+    public ResponseEntity<ResponseData<UserProfileRequest>> updateUserProfile(UserProfileRequest userProfileRequest) {
         try {
             User user = getById(userProfileRequest.getId());
             user.setName(userProfileRequest.getName());
             user.setEmail(userProfileRequest.getEmail());
             user.setNumberPhone(userProfileRequest.getNumberPhone());
             user.setBirthDate(userProfileRequest.getBirthDate());
-
             userRepository.save(user);
+            return ResponseEntity.ok(new ResponseData<>(userProfileRequest,
+                    "User : " + userProfileRequest.getName() + SUCCESSFULLY_UPDATED));
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }

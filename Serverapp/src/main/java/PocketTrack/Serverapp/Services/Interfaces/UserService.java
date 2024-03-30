@@ -30,7 +30,7 @@ public interface UserService extends BaseServices<User, String> {
 
     List<String> getAccountRole(String id);
 
-    void updateUserProfile(UserProfileRequest userProfileRequest);
+    ResponseEntity<ResponseData<UserProfileRequest>> updateUserProfile(UserProfileRequest userProfileRequest);
 
     void updatePasswordUser(UserPasswordRequestData userPasswordRequestData);
 

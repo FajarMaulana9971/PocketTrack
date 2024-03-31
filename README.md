@@ -23,11 +23,14 @@ PocketTrack simplifies the process of managing finances before marriage by provi
 ## Getting Started
 
 To get started with PocketTrack, follow these steps:
-
-1. Clone this repository.
-2. Navigate to the backend folder and run the Java Spring Boot application.
-3. Navigate to the frontend folder and run the React.js application.
-4. Access the application through your web browser.
+A. Clone this repository.
+B. Run mysql with laragon or xampp (make sure running on port 3306)
+C. Run redis (with docker or redis desktop app and make sure running on port 6379)
+D. Navigate to the Serverapp folder and run the Java Spring Boot application with these steps :
+  1. open terminal and type mvn clean install
+  2. in terminal, type mvn spring-boot:run
+E. Navigate to the frontend folder and run the React.js application.
+F. Access the application through your web browser.
 
 ## Contributing
 

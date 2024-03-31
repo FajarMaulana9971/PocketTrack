@@ -70,7 +70,7 @@ public class AuthController {
     }
 
     @PostMapping("validate-token")
-    public ResponseEntity<?> validateToken(@RequestHeader("authorization") String authorization) {
+    public ResponseEntity<?> validateAuthToken(@RequestHeader("authorization") String authorization) {
         return authService.validateToken(authorization);
     }
 

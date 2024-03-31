@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
+import PocketTrack.Serverapp.Domains.Models.Requests.Redis.UserRoleRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
@@ -55,6 +56,11 @@ public class UserController {
     @PatchMapping("public/user")
     public ResponseEntity<?> updateUserProfile(UserProfileRequest userProfileRequest) {
         return userService.updateUserProfile(userProfileRequest);
+    }
+
+    @PatchMapping("public/users/role")
+    public void updateUserRole(UserRoleRequest userRoleRequest) {
+        userService.updateUserRole(userRoleRequest);
     }
 
 }

@@ -25,7 +25,7 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/income")
+@RequestMapping("income")
 public class IncomeController {
     private IncomeService incomeService;
 

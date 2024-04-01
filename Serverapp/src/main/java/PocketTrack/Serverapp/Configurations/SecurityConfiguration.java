@@ -18,28 +18,34 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-    private final JwtUtil jwtUtil;
-    private final UserService userService;
+        private final JwtUtil jwtUtil;
+        private final UserService userService;
 
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers(HttpMethod.GET, "/admin/**").hasAnyRole("SUPER_ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/admin/**").hasAnyRole("SUPER_ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/admin/**").hasAnyRole("SUPER_ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/admin/**").hasAnyRole("SUPER_ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/admin/**").hasAnyRole("SUPER_ADMIN")
-                        .anyRequest().permitAll())
-                .addFilter(new AuthenticationFilter(
-                        authenticationManager(httpSecurity.getSharedObject(AuthenticationConfiguration.class)), jwtUtil,
-                        userService))
-                .sessionManagement(
-                        sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .build();
-    }
+        public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+                return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                                .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                                                .requestMatchers(HttpMethod.POST, "/register/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/admin/**").hasAnyRole("SUPER_ADMIN")
+                                                .requestMatchers(HttpMethod.POST, "/admin/**").hasAnyRole("SUPER_ADMIN")
+                                                .requestMatchers(HttpMethod.PUT, "/admin/**").hasAnyRole("SUPER_ADMIN")
+                                                .requestMatchers(HttpMethod.PATCH, "/admin/**")
+                                                .hasAnyRole("SUPER_ADMIN")
+                                                .requestMatchers(HttpMethod.DELETE, "/admin/**")
+                                                .hasAnyRole("SUPER_ADMIN")
+                                                .anyRequest().permitAll())
+                                .addFilter(new AuthenticationFilter(
+                                                authenticationManager(httpSecurity
+                                                                .getSharedObject(AuthenticationConfiguration.class)),
+                                                jwtUtil,
+                                                userService))
+                                .sessionManagement(
+                                                sessionManagement -> sessionManagement
+                                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .build();
+        }
 
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+                        throws Exception {
+                return authenticationConfiguration.getAuthenticationManager();
+        }
 }

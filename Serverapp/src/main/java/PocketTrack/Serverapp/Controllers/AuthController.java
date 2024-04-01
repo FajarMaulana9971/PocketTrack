@@ -28,7 +28,6 @@ import lombok.AllArgsConstructor;
 public class AuthController {
     private final AuthService authService;
 
-    // @Operation(summary = "This endpoint is used to register a new user")
     @PostMapping("register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterData registerData, Errors errors) {
         if (errors.hasErrors()) {

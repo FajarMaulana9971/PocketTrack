@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class AuthenticationFilter extends BasicAuthenticationFilter {
+
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
@@ -45,7 +46,7 @@ public class AuthenticationFilter extends BasicAuthenticationFilter {
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        return (StringUtils.hasText(bearerToken) && bearerToken.startsWith("bearer ")) ? bearerToken.substring(7)
+        return (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) ? bearerToken.substring(7)
                 : null;
     }
 
@@ -63,7 +64,7 @@ public class AuthenticationFilter extends BasicAuthenticationFilter {
     }
 
     private static Collection<? extends GrantedAuthority> getAuthorities(List<String> roles) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
+        List<GrantedAuthority> authorities = new java.util.ArrayList<>();
         for (String role : roles) {
             authorities.add(new SimpleGrantedAuthority(role));
         }

@@ -61,7 +61,7 @@ public class OutcomeController {
         return outcomeService.getByStatusTrueWithResponse();
     }
 
-    @GetMapping("outcome/{outcomeId}/budget/{budgetId}")
+    @GetMapping("admin/outcome/{outcomeId}/budget/{budgetId}")
     public ResponseEntity<?> connectOutcomeWithBudget(@PathVariable String outcomeId, @PathVariable String budgetId) {
         return outcomeService.connectOutcomeWithBUdget(outcomeId, budgetId);
     }
@@ -74,12 +74,12 @@ public class OutcomeController {
         return outcomeService.getAllOutcomeByBudgetId(budgetId, keywoard, page, size);
     }
 
-    @PostMapping("insert")
+    @PostMapping("admin/insert")
     public ResponseEntity<?> insertOutcome(@RequestBody OutcomeRequest outcomeRequest) {
         return outcomeService.insertOutcome(outcomeRequest);
     }
 
-    @DeleteMapping("{outcomeId}/delete")
+    @DeleteMapping("admin/{outcomeId}/delete")
     public ResponseEntity<?> deleteOutcome(@PathVariable String outcomeId) {
         return outcomeService.deleteOutcome(outcomeId);
     }

@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/budget")
+@RequestMapping("budget")
 public class BudgetController {
     private BudgetService budgetService;
 
@@ -47,7 +47,7 @@ public class BudgetController {
         return budgetService.getAllBudget(keyword, page, size);
     }
 
-    @PostMapping("insert")
+    @PostMapping("admin/insert")
     public ResponseEntity<?> insertBudget(BudgetRequest budgetRequest, Errors error) {
         if (error.hasErrors()) {
             List<ErrorData> errorDataList = new ArrayList<>();
@@ -56,7 +56,7 @@ public class BudgetController {
         return budgetService.insertBudget(budgetRequest);
     }
 
-    @PatchMapping("update/{id}")
+    @PatchMapping("admin/update/{id}")
     public ResponseEntity<?> updateBudget(@PathVariable String id, @Valid @RequestBody BudgetRequest budgetRequest,
             Errors errors) {
         if (errors.hasErrors()) {
@@ -66,7 +66,7 @@ public class BudgetController {
         return budgetService.updateBudget(id, budgetRequest);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("admin/delete/{id}")
     public ResponseEntity<?> deleteBudgetById(@PathVariable String id) {
         return budgetService.deleteWithResponse(id);
     }

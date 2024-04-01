@@ -39,7 +39,7 @@ public class IncomeController {
         return incomeService.getByTitleWithResponse(title);
     }
 
-    @PostMapping("income/{incomeId}/budget/{budgetId}")
+    @PostMapping("admin/income/{incomeId}/budget/{budgetId}")
     public void connectIncomeWithBudget(@PathVariable String incomeId, @PathVariable String budgetId) {
         incomeService.connectIncomeWithBudget(incomeId, budgetId);
     }
@@ -52,7 +52,7 @@ public class IncomeController {
         return incomeService.getAllIncomeByBudget(budgetId, keyword, page, size);
     }
 
-    @PostMapping("insert")
+    @PostMapping("admin/insert")
     public ResponseEntity<?> insertIncome(@Valid @RequestBody IncomeRequest incomeRequest, Errors errors) {
         if (errors.hasErrors()) {
             List<ErrorData> errorDataList = new ArrayList<>();
@@ -71,7 +71,7 @@ public class IncomeController {
         return incomeService.addAmountBudgetWithIncomeId(id, incomeRequest);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("admin/delete/{id}")
     public ResponseEntity<?> deleteIncome(@PathVariable String id) {
         return incomeService.deleteWithResponse(id);
     }

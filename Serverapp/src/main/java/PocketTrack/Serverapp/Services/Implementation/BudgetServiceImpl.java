@@ -108,7 +108,6 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
 
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");
             LocalDateTime now = LocalDateTime.now(zoneId);
-
             budget.setDate(now);
             Budget savedBudget = budgetRepository.save(budget);
 

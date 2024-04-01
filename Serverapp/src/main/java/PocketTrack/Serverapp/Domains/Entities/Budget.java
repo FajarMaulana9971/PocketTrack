@@ -32,6 +32,12 @@ public class Budget extends BaseEntity {
     @Column(name = "total_balance")
     private BigDecimal totalBalance;
 
+    @Column(length = 20)
+    private String title;
+
+    @Column(length = 50)
+    private String description;
+
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Income> income;

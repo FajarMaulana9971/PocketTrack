@@ -14,4 +14,8 @@ public class BudgetRequest {
     private LocalDateTime date;
 
     private BigDecimal totalBalance = BigDecimal.ZERO;
+
+    private String title;
+
+    private String description;
 }

@@ -1,5 +1,8 @@
 package PocketTrack.Serverapp.Services.Implementation;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,9 +75,14 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email has already registered!");
             }
 
+            ZoneId zoneId = ZoneId.of("Asia/Jakarta");
+            LocalDate now = LocalDate.now(zoneId);
             User user = new User();
             user.setName(registerData.getName());
             user.setEmail(registerData.getEmail());
+            user.setGender(registerData.getGender());
+            user.setJoinDate(now);
+            user.setNumberPhone(registerData.getNumberPhone());
 
             int atIndex = registerData.getEmail().indexOf("@");
 

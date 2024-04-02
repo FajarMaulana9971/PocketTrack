@@ -24,7 +24,7 @@ public class AccountStatus {
     @Id
     private Integer id;
 
-    @Column(length = 15, nullable = false, unique = true)
+    @Column(length = 20, nullable = false, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "accountStatus", fetch = FetchType.LAZY)

@@ -7,6 +7,7 @@ import org.hibernate.annotations.Comment;
 
 import PocketTrack.Serverapp.Domains.Entities.Base.BaseEntity;
 import PocketTrack.Serverapp.Domains.Enums.Gender;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -47,7 +48,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Account account;
 }

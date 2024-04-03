@@ -24,6 +24,7 @@ import PocketTrack.Serverapp.Domains.Constants.ConstantVariables;
 import PocketTrack.Serverapp.Domains.Constants.ExceptionMessage;
 import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
+import PocketTrack.Serverapp.Domains.Entities.AccountStatus;
 import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
@@ -91,8 +92,9 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             account.setPassword(passwordEncoder.encode(registerData.getPassword()));
             account.setVerificationCode(UUID.randomUUID().toString());
             account.setUser(user);
-            accountRepository.save(account);
-
+            AccountStatus accountStatus = accountStatusRepository.findById(1)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            account.setAccountStatus(accountStatus);
             user.setAccount(account);
             userRepository.save(user);
 

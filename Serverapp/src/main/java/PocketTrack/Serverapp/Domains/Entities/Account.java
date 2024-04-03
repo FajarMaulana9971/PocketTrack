@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import PocketTrack.Serverapp.Domains.Entities.Base.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,7 +42,7 @@ public class Account extends BaseEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<AccountRole> accountRoles;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "id", nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

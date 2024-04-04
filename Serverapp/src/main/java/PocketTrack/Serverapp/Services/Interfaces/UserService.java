@@ -8,12 +8,10 @@ import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserEmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserPasswordRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
-import PocketTrack.Serverapp.Domains.Models.Requests.UserRoleRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.Redis.UserRoleRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.UserResponse;
-import PocketTrack.Serverapp.Domains.Models.Responses.UsersResponseList;
 import PocketTrack.Serverapp.Services.Interfaces.Base.BaseServices;
 
 public interface UserService extends BaseServices<User, String> {

@@ -1,7 +1,6 @@
 package PocketTrack.Serverapp.Domains.Entities;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 
 import org.hibernate.annotations.Comment;
 

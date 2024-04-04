@@ -1,14 +1,12 @@
 package PocketTrack.Serverapp.Services.Implementation;
 
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.NOT_FOUND;
-import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_CREATED;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_RETRIEVED;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_UPDATED;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -29,7 +27,6 @@ import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserEmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserPasswordRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserProfileRequest;
-import PocketTrack.Serverapp.Domains.Models.Requests.UserRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.UserRoleRequestData;
 import PocketTrack.Serverapp.Domains.Models.Requests.Redis.UserRoleRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;

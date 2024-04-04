@@ -89,6 +89,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             user.setGender(registerData.getGender());
             user.setJoinDate(now);
             user.setNumberPhone(registerData.getNumberPhone());
+            user.setBirthDate(registerData.getBirthDate());
 
             int atIndex = registerData.getEmail().indexOf("@");
 

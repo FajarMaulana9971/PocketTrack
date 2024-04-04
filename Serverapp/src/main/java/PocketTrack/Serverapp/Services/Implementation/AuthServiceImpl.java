@@ -97,7 +97,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             account.setPassword(passwordEncoder.encode(registerData.getPassword()));
             account.setVerificationCode(UUID.randomUUID().toString());
             account.setUser(user);
-            AccountStatus accountStatus = accountStatusRepository.findById(1)
+            AccountStatus accountStatus = accountStatusRepository.findById(-1)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
             account.setAccountStatus(accountStatus);
             user.setAccount(account);
@@ -303,7 +303,10 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             if (account == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Verification code is not valid !");
             }
-            account.setAccountStatus(accountStatusRepository.getReferenceById(1));
+            if (account.getAccountStatus().getId() == 0) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Account has already verificated !");
+            }
+            account.setAccountStatus(accountStatusRepository.getReferenceById(0));
             account.setVerificationCode(null);
             accountRepository.save(account);
             return new ResponseEntity<>(new ResponseData<>("Active", "Account verified successfully ! "),

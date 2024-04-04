@@ -65,7 +65,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
     /**
      * This method is used to register a new user
      * 
-     * @param data - Request body of register data
+     * @param registerData - Request body of register data
      * @return Register with response data
      */
     @Override
@@ -129,8 +129,8 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
     /**
      * This method is used to log in a user
      * 
-     * @param data     - Request body of login data
-     * @param response - Response of http servlet
+     * @param loginData - Request body of login data
+     * @param response  - Response of http servlet
      * @return Login response with token and expired token
      */
     @Override

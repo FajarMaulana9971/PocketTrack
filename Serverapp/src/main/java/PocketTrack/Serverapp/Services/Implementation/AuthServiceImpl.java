@@ -71,9 +71,14 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
     @Override
     public ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData) {
         try {
-            Optional<User> userCheck = userRepository.findByEmail(registerData.getEmail());
-            if (userCheck.isPresent()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email has already registered!");
+            Optional<User> emailUserCheck = userRepository.findByEmail(registerData.getEmail());
+            if (emailUserCheck.isPresent()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email has already registered!");
+            }
+
+            Optional<User> numberPhoneCheck = userRepository.findByNumberPhone(registerData.getNumberPhone());
+            if (numberPhoneCheck.isPresent()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Number phone is already registered!");
             }
 
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");

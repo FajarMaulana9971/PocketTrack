@@ -13,5 +13,7 @@ public interface UserRepository extends BaseRepositories<User, String> {
 
     Optional<User> findByEmail(@Param("email") String email);
 
+    Optional<User> findByNumberPhone(@Param("numberPhone") String numberPhone);
+
     User findByEmailOrAccount_Username(@Param("email") String email, @Param("username") String username);
 }

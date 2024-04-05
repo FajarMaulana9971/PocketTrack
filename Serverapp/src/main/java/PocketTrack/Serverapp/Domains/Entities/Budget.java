@@ -11,6 +11,9 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -45,4 +48,9 @@ public class Budget extends BaseEntity {
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Outcome> outcome;
+
+    @ManyToMany
+    @JoinTable(name = "tb_tr_user_budget", joinColumns = @JoinColumn(name = "budget_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<User> users;
 }

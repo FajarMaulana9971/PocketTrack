@@ -2,7 +2,9 @@ package PocketTrack.Serverapp.Domains.Models.Requests;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import PocketTrack.Serverapp.Domains.Entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +17,5 @@ public class BudgetRequest {
     private BigDecimal totalBalance = BigDecimal.ZERO;
     private String title;
     private String description;
+    // private List<User> users;
 }

@@ -27,6 +27,7 @@ import PocketTrack.Serverapp.Domains.Entities.AccountStatus;
 import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
+import PocketTrack.Serverapp.Domains.Models.Requests.BudgetRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
@@ -43,6 +44,7 @@ import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.AuthService;
+import PocketTrack.Serverapp.Services.Interfaces.BudgetService;
 import PocketTrack.Serverapp.Services.Interfaces.UserService;
 import PocketTrack.Serverapp.Utilities.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,6 +59,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
     private AccountRepository accountRepository;
     private RoleRepository roleRepository;
     private UserService userService;
+    private BudgetService budgetService;
     private AccountRoleRepository accountRoleRepository;
     private AccountStatusRepository accountStatusRepository;
     private RedisTemplate<String, EmailRequest> sendUserEmail;
@@ -306,6 +309,14 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             if (account.getAccountStatus().getId() == 0) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Account has already verificated !");
             }
+
+            // Account accountMaker = accountRepository.findById(accountId).orElseThrow(()
+            // -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account id is not
+            // found"));
+            // List<User> user = userRepository.findById(accountId);
+            // BudgetRequest budgetRequest = new BudgetRequest();
+            // budgetService.insertBudget(budgetRequest.setUsers(user));
+
             account.setAccountStatus(accountStatusRepository.getReferenceById(0));
             account.setVerificationCode(null);
             accountRepository.save(account);

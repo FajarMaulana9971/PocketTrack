@@ -9,13 +9,14 @@ import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
 import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
+import PocketTrack.Serverapp.Domains.Models.Responses.RegisterResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ValidateTokenResponse;
 import PocketTrack.Serverapp.Services.Interfaces.Base.BaseServices;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService extends BaseServices<User, String> {
-    ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData);
+    ResponseEntity<ResponseData<RegisterResponse>> register(RegisterData registerData);
 
     LoginResponse login(LoginData loginData, HttpServletResponse response);
 

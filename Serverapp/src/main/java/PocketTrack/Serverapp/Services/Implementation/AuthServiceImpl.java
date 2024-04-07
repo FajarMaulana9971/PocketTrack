@@ -31,6 +31,7 @@ import PocketTrack.Serverapp.Domains.Models.Requests.BudgetRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
+import PocketTrack.Serverapp.Domains.Models.Responses.RegisterResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.RoleResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ValidateTokenResponse;
@@ -71,7 +72,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
      * @return Register with response data
      */
     @Override
-    public ResponseEntity<ResponseData<RegisterData>> register(RegisterData registerData) {
+    public ResponseEntity<ResponseData<RegisterResponse>> register(RegisterData registerData) {
         try {
             Optional<User> emailUserCheck = userRepository.findByEmail(registerData.getEmail());
             if (emailUserCheck.isPresent()) {
@@ -113,6 +114,11 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
 
             registerData.setPassword(null);
 
+            RegisterResponse registerResponse = new RegisterResponse();
+            registerResponse.setAccountId(user.getId());
+            registerResponse.setEmail(user.getEmail());
+            registerResponse.setVerificationCode(account.getVerificationCode());
+
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setUserid(user.getId());
             emailRequest.setName(user.getName());
@@ -120,7 +126,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             emailRequest.setSubject("Registration");
             emailRequest.setCode(account.getVerificationCode());
             sendUserEmail.convertAndSend("email", emailRequest);
-            return new ResponseEntity<>(new ResponseData<>(registerData, "Registration successfully"),
+            return new ResponseEntity<>(new ResponseData<>(registerResponse, "Registration successfully"),
                     HttpStatus.CREATED);
 
         } catch (ResponseStatusException e) {

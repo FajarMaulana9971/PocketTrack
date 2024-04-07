@@ -300,7 +300,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
      * @return Account with response data
      */
     @Override
-    public ResponseEntity<ResponseData<String>> verification(String verificationCode) {
+    public ResponseEntity<ResponseData<String>> verification(String accountId, String verificationCode) {
         try {
             Account account = accountRepository.findByVerificationCode(verificationCode);
             if (account == null) {
@@ -310,12 +310,16 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Account has already verificated !");
             }
 
-            // Account accountMaker = accountRepository.findById(accountId).orElseThrow(()
-            // -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account id is not
-            // found"));
-            // List<User> user = userRepository.findById(accountId);
-            // BudgetRequest budgetRequest = new BudgetRequest();
-            // budgetService.insertBudget(budgetRequest.setUsers(user));
+            Account accountMaker = accountRepository.findById(accountId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account id is not found"));
+            // User user = userRepository.findById(accountId).orElseThrow(() -> new
+            // ResponseStatusException(HttpStatus.NOT_FOUND, "user id is not found"));
+            List<User> userList = new ArrayList<>();
+            userList.add(accountMaker.getUser());
+
+            BudgetRequest budgetRequest = new BudgetRequest();
+            budgetRequest.setUsers(userList);
+            budgetService.insertBudget(budgetRequest);
 
             account.setAccountStatus(accountStatusRepository.getReferenceById(0));
             account.setVerificationCode(null);

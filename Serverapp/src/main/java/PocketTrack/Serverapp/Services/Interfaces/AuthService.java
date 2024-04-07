@@ -29,7 +29,7 @@ public interface AuthService extends BaseServices<User, String> {
 
     LoginResponse refreshToken(String accessToken);
 
-    ResponseEntity<ResponseData<String>> verification(String verificationCode);
+    ResponseEntity<ResponseData<String>> verification(String accountId, String verificationCode);
 
     String logout(String accessToken, HttpServletResponse response);
 

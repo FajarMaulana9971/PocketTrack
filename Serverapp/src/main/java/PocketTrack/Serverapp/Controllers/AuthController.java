@@ -62,9 +62,9 @@ public class AuthController {
         return authService.resetPassword(passwordRequest);
     }
 
-    @PostMapping("verification/{verificationCode}")
-    public ResponseEntity<?> verification(@PathVariable String verificationCode) {
-        return authService.verification(verificationCode);
+    @PostMapping("verification/{accountId}/{verificationCode}")
+    public ResponseEntity<?> verification(@PathVariable String accountId, @PathVariable String verificationCode) {
+        return authService.verification(accountId, verificationCode);
     }
 
     @PostMapping("validate-token")

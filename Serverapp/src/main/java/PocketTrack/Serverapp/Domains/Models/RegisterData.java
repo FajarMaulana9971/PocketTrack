@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import PocketTrack.Serverapp.Domains.Enums.Gender;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -24,7 +25,7 @@ public class RegisterData {
     @NotEmpty(message = "number phone cannot be empty")
     private String numberPhone;
 
-    @NotEmpty(message = "birth date cannot be empty")
+    @NotNull(message = "birth date cannot be empty")
     private LocalDate birthDate;
 
 }

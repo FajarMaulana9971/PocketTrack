@@ -328,52 +328,6 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Account has already verificated !");
             }
 
-            User user = account.getUser();
-            if (user != null) {
-                Budget budget = new Budget();
-                budget.setId(UUID.randomUUID().toString());
-                budget.setDate(LocalDateTime.now());
-                budget.setTotalBalance(BigDecimal.ZERO);
-                budget.setTitle("Default Budget Title");
-                budget.setDescription("Default Budget Description");
-
-                Budget savedBudget = budgetRepository.save(budget);
-
-                List<Budget> userBudgets = user.getBudgets();
-                if (userBudgets == null) {
-                    userBudgets = new ArrayList<>();
-                }
-                userBudgets.add(savedBudget);
-                user.setBudgets(userBudgets);
-                userRepository.save(user);
-
-                List<User> budgetUsers = budget.getUsers();
-                if (budgetUsers == null) {
-                    budgetUsers = new ArrayList<>();
-                }
-                budgetUsers.add(user);
-                savedBudget.setUsers(budgetUsers);
-                budgetRepository.save(savedBudget);
-
-                Income income = new Income();
-                income.setDate(LocalDateTime.now());
-                income.setDescription("First commit by budget create");
-                income.setTitle("First Commit");
-                income.setAmount(BigDecimal.ZERO);
-                income.setBudget(savedBudget);
-                incomeRepository.save(income);
-
-                Outcome outcome = new Outcome();
-                outcome.setDate(LocalDateTime.now());
-                outcome.setDescription("first commit by budget create");
-                outcome.setTitle("first commit");
-                outcome.setAmount(BigDecimal.ZERO);
-                outcome.setBudget(savedBudget);
-                outcome.setIsDeleted(false);
-                outcome.setStatus(true);
-                outcomeRepository.save(outcome);
-            }
-
             account.setAccountStatus(accountStatusRepository.getReferenceById(0));
             account.setVerificationCode(null);
             accountRepository.save(account);

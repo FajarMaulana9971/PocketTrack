@@ -1,8 +1,11 @@
 package PocketTrack.Serverapp.Services.Implementation;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,9 @@ import PocketTrack.Serverapp.Domains.Constants.ExceptionMessage;
 import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.AccountStatus;
+import PocketTrack.Serverapp.Domains.Entities.Budget;
+import PocketTrack.Serverapp.Domains.Entities.Income;
+import PocketTrack.Serverapp.Domains.Entities.Outcome;
 import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
@@ -41,6 +47,9 @@ import PocketTrack.Serverapp.Exceptions.RequiredFieldNotValidException;
 import PocketTrack.Serverapp.Repositories.AccountRepository;
 import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
 import PocketTrack.Serverapp.Repositories.AccountStatusRepository;
+import PocketTrack.Serverapp.Repositories.BudgetRepository;
+import PocketTrack.Serverapp.Repositories.IncomeRepository;
+import PocketTrack.Serverapp.Repositories.OutcomeRepository;
 import PocketTrack.Serverapp.Repositories.RoleRepository;
 import PocketTrack.Serverapp.Repositories.UserRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
@@ -61,6 +70,9 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
     private RoleRepository roleRepository;
     private UserService userService;
     private BudgetService budgetService;
+    private BudgetRepository budgetRepository;
+    private IncomeRepository incomeRepository;
+    private OutcomeRepository outcomeRepository;
     private AccountRoleRepository accountRoleRepository;
     private AccountStatusRepository accountStatusRepository;
     private RedisTemplate<String, EmailRequest> sendUserEmail;
@@ -316,20 +328,56 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Account has already verificated !");
             }
 
-            Account accountMaker = accountRepository.findById(accountId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account id is not found"));
-            // User user = userRepository.findById(accountId).orElseThrow(() -> new
-            // ResponseStatusException(HttpStatus.NOT_FOUND, "user id is not found"));
-            List<User> userList = new ArrayList<>();
-            userList.add(accountMaker.getUser());
+            User user = account.getUser();
+            if (user != null) {
+                Budget budget = new Budget();
+                budget.setId(UUID.randomUUID().toString());
+                budget.setDate(LocalDateTime.now());
+                budget.setTotalBalance(BigDecimal.ZERO);
+                budget.setTitle("Default Budget Title");
+                budget.setDescription("Default Budget Description");
 
-            BudgetRequest budgetRequest = new BudgetRequest();
-            budgetRequest.setUsers(userList);
-            budgetService.insertBudget(budgetRequest);
+                Budget savedBudget = budgetRepository.save(budget);
+
+                List<Budget> userBudgets = user.getBudgets();
+                if (userBudgets == null) {
+                    userBudgets = new ArrayList<>();
+                }
+                userBudgets.add(savedBudget);
+                user.setBudgets(userBudgets);
+                userRepository.save(user);
+
+                List<User> budgetUsers = budget.getUsers();
+                if (budgetUsers == null) {
+                    budgetUsers = new ArrayList<>();
+                }
+                budgetUsers.add(user);
+                savedBudget.setUsers(budgetUsers);
+                budgetRepository.save(savedBudget);
+
+                Income income = new Income();
+                income.setDate(LocalDateTime.now());
+                income.setDescription("First commit by budget create");
+                income.setTitle("First Commit");
+                income.setAmount(BigDecimal.ZERO);
+                income.setBudget(savedBudget);
+                incomeRepository.save(income);
+
+                Outcome outcome = new Outcome();
+                outcome.setDate(LocalDateTime.now());
+                outcome.setDescription("first commit by budget create");
+                outcome.setTitle("first commit");
+                outcome.setAmount(BigDecimal.ZERO);
+                outcome.setBudget(savedBudget);
+                outcome.setIsDeleted(false);
+                outcome.setStatus(true);
+                outcomeRepository.save(outcome);
+            }
 
             account.setAccountStatus(accountStatusRepository.getReferenceById(0));
             account.setVerificationCode(null);
             accountRepository.save(account);
+
             return new ResponseEntity<>(new ResponseData<>("Active", "Account verified successfully ! "),
                     HttpStatus.OK);
         } catch (ResponseStatusException e) {

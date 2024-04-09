@@ -2,6 +2,7 @@ package PocketTrack.Serverapp.Domains.Entities;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import org.hibernate.annotations.Comment;
 
@@ -14,6 +15,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
@@ -51,11 +53,12 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
     private Account account;
 
     @ManyToMany(mappedBy = "users")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Budget> budgets;
+
 }

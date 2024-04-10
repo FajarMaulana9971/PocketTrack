@@ -17,7 +17,9 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
@@ -57,8 +59,11 @@ public class User extends BaseEntity {
     @PrimaryKeyJoinColumn
     private Account account;
 
-    @ManyToMany(mappedBy = "users")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Budget> budgets;
+    // @ManyToMany(mappedBy = "users")
+    // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    // private List<Budget> budgets;
 
+    @ManyToOne
+    @JoinColumn(name = "budget_id", nullable = false)
+    private Budget budget;
 }

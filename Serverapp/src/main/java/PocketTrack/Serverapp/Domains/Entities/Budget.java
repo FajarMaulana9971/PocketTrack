@@ -49,8 +49,12 @@ public class Budget extends BaseEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Outcome> outcome;
 
-    @ManyToMany
-    @JoinTable(name = "tb_tr_user_budget", joinColumns = @JoinColumn(name = "budget_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<User> users;
+    // @ManyToMany
+    // @JoinTable(name = "tb_tr_user_budget", joinColumns = @JoinColumn(name =
+    // "budget_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    // private List<User> users;
+
+    // @OneToMany(mappedBy = "budget", cascade = CascadeType.All)
+    // @JsonProperty(access = JsonProperty.A)
 }

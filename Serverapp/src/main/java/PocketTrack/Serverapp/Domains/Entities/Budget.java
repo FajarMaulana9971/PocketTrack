@@ -55,6 +55,7 @@ public class Budget extends BaseEntity {
     // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     // private List<User> users;
 
-    // @OneToMany(mappedBy = "budget", cascade = CascadeType.All)
-    // @JsonProperty(access = JsonProperty.A)
+    @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<Budget> budget;
 }

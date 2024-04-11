@@ -357,7 +357,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             outcome.setStatus(true);
             outcomeRepository.save(outcome);
 
-            User user = new User();
+            User user = account.getUser();
             user.setBudget(savedBudget);
             userRepository.save(user);
 

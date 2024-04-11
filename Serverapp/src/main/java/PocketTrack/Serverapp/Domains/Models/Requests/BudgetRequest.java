@@ -17,5 +17,4 @@ public class BudgetRequest {
     private BigDecimal totalBalance = BigDecimal.ZERO;
     private String title;
     private String description;
-    private List<User> users;
 }

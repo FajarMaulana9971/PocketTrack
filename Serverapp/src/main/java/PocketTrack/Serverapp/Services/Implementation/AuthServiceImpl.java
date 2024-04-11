@@ -105,6 +105,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             user.setJoinDate(now);
             user.setNumberPhone(registerData.getNumberPhone());
             user.setBirthDate(registerData.getBirthDate());
+            // user.setBudget(null)
 
             int atIndex = registerData.getEmail().indexOf("@");
 
@@ -327,6 +328,38 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             if (account.getAccountStatus().getId() == 0) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Account has already verificated !");
             }
+
+            ZoneId zoneId = ZoneId.of("Asia/Jakarta");
+            LocalDateTime now = LocalDateTime.now(zoneId);
+            BudgetRequest budgetRequest = new BudgetRequest();
+            Budget budget = new Budget();
+            budget.setDate(now);
+            budget.setTotalBalance(budgetRequest.getTotalBalance());
+            budget.setTitle("first default commit by admin ");
+            budget.setDescription("First default commit by : " + accountId.toUpperCase());
+            Budget savedBudget = budgetRepository.save(budget);
+
+            Income income = new Income();
+            income.setDate(now);
+            income.setDescription("First commit by budget create".toLowerCase());
+            income.setTitle("First Commit".toUpperCase());
+            income.setAmount(BigDecimal.ZERO);
+            income.setBudget(savedBudget);
+            incomeRepository.save(income);
+
+            Outcome outcome = new Outcome();
+            outcome.setDate(now);
+            outcome.setDescription("first commit by budget create".toLowerCase());
+            outcome.setTitle("first commit".toUpperCase());
+            outcome.setAmount(BigDecimal.ZERO);
+            outcome.setBudget(savedBudget);
+            outcome.setIsDeleted(false);
+            outcome.setStatus(true);
+            outcomeRepository.save(outcome);
+
+            User user = new User();
+            user.setBudget(savedBudget);
+            userRepository.save(user);
 
             account.setAccountStatus(accountStatusRepository.getReferenceById(0));
             account.setVerificationCode(null);

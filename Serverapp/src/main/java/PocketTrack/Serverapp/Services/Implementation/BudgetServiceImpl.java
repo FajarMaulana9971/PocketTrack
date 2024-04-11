@@ -3,6 +3,7 @@ package PocketTrack.Serverapp.Services.Implementation;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.*;
 import PocketTrack.Serverapp.Domains.Entities.Budget;
 import PocketTrack.Serverapp.Domains.Entities.Income;
 import PocketTrack.Serverapp.Domains.Entities.Outcome;
+import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.BudgetRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;

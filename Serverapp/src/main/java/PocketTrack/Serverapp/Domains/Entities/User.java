@@ -59,11 +59,7 @@ public class User extends BaseEntity {
     @PrimaryKeyJoinColumn
     private Account account;
 
-    // @ManyToMany(mappedBy = "users")
-    // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    // private List<Budget> budgets;
-
     @ManyToOne
-    @JoinColumn(name = "budget_id", nullable = false)
+    @JoinColumn(name = "budget_id")
     private Budget budget;
 }

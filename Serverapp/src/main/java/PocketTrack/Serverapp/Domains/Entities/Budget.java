@@ -35,10 +35,10 @@ public class Budget extends BaseEntity {
     @Column(name = "total_balance")
     private BigDecimal totalBalance;
 
-    @Column(length = 20)
+    @Column(length = 50)
     private String title;
 
-    @Column(length = 50)
+    @Column(length = 200)
     private String description;
 
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -49,13 +49,7 @@ public class Budget extends BaseEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Outcome> outcome;
 
-    // @ManyToMany
-    // @JoinTable(name = "tb_tr_user_budget", joinColumns = @JoinColumn(name =
-    // "budget_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    // private List<User> users;
-
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Budget> budget;
+    private List<User> user;
 }

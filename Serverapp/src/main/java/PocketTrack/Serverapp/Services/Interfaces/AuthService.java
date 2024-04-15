@@ -35,4 +35,6 @@ public interface AuthService extends BaseServices<User, String> {
     String logout(String accessToken, HttpServletResponse response);
 
     ResponseEntity<ValidateTokenResponse> validateToken(String authorization);
+
+    ResponseEntity<ResponseData<String>> deleteUser(String accountId);
 }

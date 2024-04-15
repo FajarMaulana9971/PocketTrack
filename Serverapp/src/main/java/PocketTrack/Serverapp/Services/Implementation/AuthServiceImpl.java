@@ -1,5 +1,7 @@
 package PocketTrack.Serverapp.Services.Implementation;
 
+import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.SUCCESSFULLY_DELETED;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -451,4 +453,24 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
         }
         return new ResponseEntity<>(validateTokenResponse, HttpStatus.OK);
     }
+
+    /**
+     * This method is used to soft delete user
+     * 
+     * @param accountId - Account id of user
+     * @return Account with response data
+     */
+    public ResponseEntity<ResponseData<String>> deleteUser(String accountId) {
+        try {
+            Account account = accountRepository.findById(accountId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account id is not found"));
+            account.setAccountStatus(accountStatusRepository.getReferenceById(-3));
+            accountRepository.save(account);
+            return new ResponseEntity<>(new ResponseData<>(account.toString(), "Account with id : "),
+                    HttpStatus.ACCEPTED);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
 }

@@ -460,6 +460,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
      * @param accountId - Account id of user
      * @return Account with response data
      */
+    @Override
     public ResponseEntity<ResponseData<String>> deleteUser(String accountId) {
         try {
             Account account = accountRepository.findById(accountId)

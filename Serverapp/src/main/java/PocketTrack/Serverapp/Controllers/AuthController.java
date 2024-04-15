@@ -72,4 +72,9 @@ public class AuthController {
         return authService.validateToken(authorization);
     }
 
+    @PostMapping("admin/delete/{accountId}")
+    public ResponseEntity<?> deleteUser(@PathVariable String accountId) {
+        return authService.deleteUser(accountId);
+    }
+
 }

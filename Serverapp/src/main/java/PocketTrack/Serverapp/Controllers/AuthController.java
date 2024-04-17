@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Models.ErrorData;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
@@ -72,8 +73,8 @@ public class AuthController {
         return authService.validateToken(authorization);
     }
 
-    @PostMapping("admin/delete/{accountId}")
-    public ResponseEntity<?> deleteUser(@PathVariable String accountId) {
+    @PostMapping("delete/{accountId}")
+    public Account deleteUser(@PathVariable String accountId) {
         return authService.deleteUser(accountId);
     }
 

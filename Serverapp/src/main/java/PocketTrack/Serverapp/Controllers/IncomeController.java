@@ -44,7 +44,7 @@ public class IncomeController {
         incomeService.connectIncomeWithBudget(incomeId, budgetId);
     }
 
-    @GetMapping("{budgetId}/budget-income")
+    @GetMapping("budget-income/{budgetId}")
     public ObjectResponseData<Income> getAllIncomeByBudgetId(@PathVariable String budgetId,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false, defaultValue = "0") int page,

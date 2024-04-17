@@ -169,7 +169,10 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account is not active!");
             }
             if (user.getAccount().getAccountStatus().getId() == -2) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account is has been banned");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account has been banned");
+            }
+            if (user.getAccount().getAccountStatus().getId() == -3) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account has been deleted");
             }
 
             String accessToken = jwtUtil.generateToken(createPayload(user), user.getEmail());

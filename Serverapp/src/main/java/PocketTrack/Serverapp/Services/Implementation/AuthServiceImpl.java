@@ -334,6 +334,10 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
                 throw new ResponseStatusException(HttpStatus.LOCKED, "Account " + accountId + " has been banned");
             }
 
+            if (account.getAccountStatus().getId() == -3) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account has been deleted !");
+            }
+
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");
             LocalDateTime now = LocalDateTime.now(zoneId);
             BudgetRequest budgetRequest = new BudgetRequest();

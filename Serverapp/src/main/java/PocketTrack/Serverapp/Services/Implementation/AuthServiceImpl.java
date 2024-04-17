@@ -330,6 +330,10 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Account has already verificated !");
             }
 
+            if (account.getAccountStatus().getId() == -2) {
+                throw new ResponseStatusException(HttpStatus.LOCKED, "Account " + accountId + " has been banned");
+            }
+
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");
             LocalDateTime now = LocalDateTime.now(zoneId);
             BudgetRequest budgetRequest = new BudgetRequest();
@@ -461,14 +465,12 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
      * @return Account with response data
      */
     @Override
-    public ResponseEntity<ResponseData<String>> deleteUser(String accountId) {
+    public Account deleteUser(String accountId) {
         try {
             Account account = accountRepository.findById(accountId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account id is not found"));
             account.setAccountStatus(accountStatusRepository.getReferenceById(-3));
-            accountRepository.save(account);
-            return new ResponseEntity<>(new ResponseData<>(account.toString(), "Account with id : "),
-                    HttpStatus.ACCEPTED);
+            return accountRepository.save(account);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }

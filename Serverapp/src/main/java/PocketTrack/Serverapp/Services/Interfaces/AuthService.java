@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 
+import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
@@ -36,5 +37,5 @@ public interface AuthService extends BaseServices<User, String> {
 
     ResponseEntity<ValidateTokenResponse> validateToken(String authorization);
 
-    ResponseEntity<ResponseData<String>> deleteUser(String accountId);
+    Account deleteUser(String accountId);
 }

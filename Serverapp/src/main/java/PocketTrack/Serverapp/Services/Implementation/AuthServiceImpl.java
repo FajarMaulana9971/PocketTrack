@@ -165,8 +165,11 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             if (!passwordEncoder.matches(loginData.getPassword(), user.getAccount().getPassword())) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
             }
-            if (user.getAccount().getAccountStatus().getId() != 1) {
+            if (user.getAccount().getAccountStatus().getId() == -1) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account is not active!");
+            }
+            if (user.getAccount().getAccountStatus().getId() == -2) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account is has been banned");
             }
 
             String accessToken = jwtUtil.generateToken(createPayload(user), user.getEmail());

@@ -17,6 +17,7 @@ import PocketTrack.Serverapp.Domains.Models.ErrorData;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
 import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
+import PocketTrack.Serverapp.Domains.Models.Requests.VerificationRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Services.Interfaces.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -63,9 +64,9 @@ public class AuthController {
         return authService.resetPassword(passwordRequest);
     }
 
-    @PostMapping("verification/{accountId}/{verificationCode}")
-    public ResponseEntity<?> verification(@PathVariable String accountId, @PathVariable String verificationCode) {
-        return authService.verification(accountId, verificationCode);
+    @PostMapping("verification")
+    public ResponseEntity<?> verification(@RequestBody VerificationRequest verificationRequest) {
+        return authService.verification(verificationRequest);
     }
 
     @PostMapping("validate-token")

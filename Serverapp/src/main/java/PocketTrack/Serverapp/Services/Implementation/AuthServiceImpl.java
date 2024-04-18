@@ -38,6 +38,7 @@ import PocketTrack.Serverapp.Domains.Models.RegisterData;
 import PocketTrack.Serverapp.Domains.Models.Requests.BudgetRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
+import PocketTrack.Serverapp.Domains.Models.Requests.VerificationRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.RegisterResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
@@ -326,9 +327,9 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
      * @return Account with response data
      */
     @Override
-    public ResponseEntity<ResponseData<String>> verification(String accountId, String verificationCode) {
+    public ResponseEntity<ResponseData<String>> verification(VerificationRequest verificationRequest) {
         try {
-            Account account = accountRepository.findByVerificationCode(verificationCode);
+            Account account = accountRepository.findByVerificationCode(verificationRequest.getVerificationCode());
             if (account == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Verification code is not valid !");
             }
@@ -337,13 +338,18 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             }
 
             if (account.getAccountStatus().getId() == -2) {
-                throw new ResponseStatusException(HttpStatus.LOCKED, "Account " + accountId + " has been banned");
+                throw new ResponseStatusException(HttpStatus.LOCKED,
+                        "Account " + verificationRequest.getAccountId() + " has been banned");
             }
 
             if (account.getAccountStatus().getId() == -3) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account has been deleted !");
             }
 
+            // if(verificationRequest.getBudgetId() == null ||
+            // verificationRequest.getBudgetId().isEmpty()){
+
+            // }
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");
             LocalDateTime now = LocalDateTime.now(zoneId);
             BudgetRequest budgetRequest = new BudgetRequest();
@@ -351,7 +357,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             budget.setDate(now);
             budget.setTotalBalance(budgetRequest.getTotalBalance());
             budget.setTitle("first default commit by admin ");
-            budget.setDescription("First default commit by : " + accountId.toUpperCase());
+            budget.setDescription("First default commit by : " + verificationRequest.getAccountId().toUpperCase());
             Budget savedBudget = budgetRepository.save(budget);
 
             Income income = new Income();

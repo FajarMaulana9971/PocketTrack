@@ -9,6 +9,7 @@ import PocketTrack.Serverapp.Domains.Entities.User;
 import PocketTrack.Serverapp.Domains.Models.LoginData;
 import PocketTrack.Serverapp.Domains.Models.RegisterData;
 import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
+import PocketTrack.Serverapp.Domains.Models.Requests.VerificationRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.RegisterResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
@@ -31,7 +32,7 @@ public interface AuthService extends BaseServices<User, String> {
 
     LoginResponse refreshToken(String accessToken);
 
-    ResponseEntity<ResponseData<String>> verification(String accountId, String verificationCode);
+    ResponseEntity<ResponseData<String>> verification(VerificationRequest verificationRequest);
 
     String logout(String accessToken, HttpServletResponse response);
 

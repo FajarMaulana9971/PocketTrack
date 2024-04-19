@@ -38,6 +38,7 @@ import PocketTrack.Serverapp.Domains.Models.RegisterData;
 import PocketTrack.Serverapp.Domains.Models.Requests.BudgetRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.EmailRequest;
 import PocketTrack.Serverapp.Domains.Models.Requests.PasswordRequest;
+import PocketTrack.Serverapp.Domains.Models.Requests.VerificationRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.LoginResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.RegisterResponse;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
@@ -326,9 +327,9 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
      * @return Account with response data
      */
     @Override
-    public ResponseEntity<ResponseData<String>> verification(String accountId, String verificationCode) {
+    public ResponseEntity<ResponseData<String>> verification(VerificationRequest verificationRequest) {
         try {
-            Account account = accountRepository.findByVerificationCode(verificationCode);
+            Account account = accountRepository.findByVerificationCode(verificationRequest.getVerificationCode());
             if (account == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Verification code is not valid !");
             }
@@ -337,45 +338,53 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
             }
 
             if (account.getAccountStatus().getId() == -2) {
-                throw new ResponseStatusException(HttpStatus.LOCKED, "Account " + accountId + " has been banned");
+                throw new ResponseStatusException(HttpStatus.LOCKED,
+                        "Account " + verificationRequest.getAccountId() + " has been banned");
             }
 
             if (account.getAccountStatus().getId() == -3) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account has been deleted !");
             }
 
-            ZoneId zoneId = ZoneId.of("Asia/Jakarta");
-            LocalDateTime now = LocalDateTime.now(zoneId);
-            BudgetRequest budgetRequest = new BudgetRequest();
-            Budget budget = new Budget();
-            budget.setDate(now);
-            budget.setTotalBalance(budgetRequest.getTotalBalance());
-            budget.setTitle("first default commit by admin ");
-            budget.setDescription("First default commit by : " + accountId.toUpperCase());
-            Budget savedBudget = budgetRepository.save(budget);
+            if (verificationRequest.getBudgetId() != null && !verificationRequest.getBudgetId().isEmpty()) {
+                Budget budget = budgetRepository.findById(verificationRequest.getBudgetId())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget id is not found"));
+                User user = account.getUser();
+                user.setBudget(budget);
+                userRepository.save(user);
+            } else {
+                ZoneId zoneId = ZoneId.of("Asia/Jakarta");
+                LocalDateTime now = LocalDateTime.now(zoneId);
+                BudgetRequest budgetRequest = new BudgetRequest();
+                Budget budget = new Budget();
+                budget.setDate(now);
+                budget.setTotalBalance(budgetRequest.getTotalBalance());
+                budget.setTitle("first default commit by admin ");
+                budget.setDescription("First default commit by : " + verificationRequest.getAccountId().toUpperCase());
+                Budget savedBudget = budgetRepository.save(budget);
 
-            Income income = new Income();
-            income.setDate(now);
-            income.setDescription("First commit by budget create".toLowerCase());
-            income.setTitle("First Commit".toUpperCase());
-            income.setAmount(BigDecimal.ZERO);
-            income.setBudget(savedBudget);
-            incomeRepository.save(income);
+                Income income = new Income();
+                income.setDate(now);
+                income.setDescription("First commit by budget create".toLowerCase());
+                income.setTitle("First Commit".toUpperCase());
+                income.setAmount(BigDecimal.ZERO);
+                income.setBudget(savedBudget);
+                incomeRepository.save(income);
 
-            Outcome outcome = new Outcome();
-            outcome.setDate(now);
-            outcome.setDescription("first commit by budget create".toLowerCase());
-            outcome.setTitle("first commit".toUpperCase());
-            outcome.setAmount(BigDecimal.ZERO);
-            outcome.setBudget(savedBudget);
-            outcome.setIsDeleted(false);
-            outcome.setStatus(true);
-            outcomeRepository.save(outcome);
+                Outcome outcome = new Outcome();
+                outcome.setDate(now);
+                outcome.setDescription("first commit by budget create".toLowerCase());
+                outcome.setTitle("first commit".toUpperCase());
+                outcome.setAmount(BigDecimal.ZERO);
+                outcome.setBudget(savedBudget);
+                outcome.setIsDeleted(false);
+                outcome.setStatus(true);
+                outcomeRepository.save(outcome);
 
-            User user = account.getUser();
-            user.setBudget(savedBudget);
-            userRepository.save(user);
-
+                User user = account.getUser();
+                user.setBudget(savedBudget);
+                userRepository.save(user);
+            }
             account.setAccountStatus(accountStatusRepository.getReferenceById(0));
             account.setVerificationCode(null);
             accountRepository.save(account);

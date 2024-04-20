@@ -40,7 +40,7 @@ public class BudgetController {
         return budgetService.getTotalBalanceWithResponse(totalBalance);
     }
 
-    @GetMapping
+    @GetMapping("admin/take-all")
     public ObjectResponseData<Budget> getAllBudget(@RequestParam(required = false) String keyword,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size) {

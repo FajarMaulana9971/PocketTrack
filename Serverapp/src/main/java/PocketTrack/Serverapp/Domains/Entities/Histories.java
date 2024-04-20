@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import PocketTrack.Serverapp.Domains.Entities.Base.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,9 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Histories extends BaseEntity {
 
+    @Column(nullable = false)
     private LocalDateTime date;
 
+    @Column(nullable = false)
     private LocalDate recordDate;
 }

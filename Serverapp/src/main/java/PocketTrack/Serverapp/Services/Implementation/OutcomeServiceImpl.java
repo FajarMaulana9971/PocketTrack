@@ -282,7 +282,6 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
             budgetRepository.save(budget);
             return new ResponseEntity<>(new ResponseData<>(updatedOutcome, "Outcome has successfully completed"),
                     HttpStatus.OK);
-
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }

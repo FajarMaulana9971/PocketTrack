@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @Table(name = "tb_tr_histories")
 @Entity
-public class Histories extends BaseEntity {
+public class History extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDateTime date;

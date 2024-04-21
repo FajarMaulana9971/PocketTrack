@@ -23,6 +23,6 @@ public class Histories extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime date;
 
-    @Column(nullable = false)
-    private LocalDate recordDate;
+    @Column(length = 500)
+    private String notes;
 }

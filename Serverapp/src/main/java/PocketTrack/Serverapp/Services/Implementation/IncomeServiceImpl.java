@@ -18,12 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import PocketTrack.Serverapp.Domains.Entities.Budget;
+import PocketTrack.Serverapp.Domains.Entities.History;
 import PocketTrack.Serverapp.Domains.Entities.Income;
 import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.IncomeRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.BudgetRepository;
+import PocketTrack.Serverapp.Repositories.HistoryRepository;
 import PocketTrack.Serverapp.Repositories.IncomeRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.BudgetService;
@@ -40,6 +42,7 @@ public class IncomeServiceImpl extends BaseServicesImpl<Income, String> implemen
     private BudgetService budgetService;
     private PaginationUtil paginationUtil;
     private ModelMapper modelMapper;
+    // private HistoryRepository historyRepository;
 
     /**
      * This method is used to get income by title
@@ -154,6 +157,12 @@ public class IncomeServiceImpl extends BaseServicesImpl<Income, String> implemen
             BigDecimal totalBalance = budget.getTotalBalance().add(newAmount);
             budget.setTotalBalance(totalBalance);
             budgetRepository.save(budget);
+
+            // History history = new History();
+            // history.setDate(now);
+            // history.setNotes(incomeRequest.getDescription());
+            // historyRepository.save(history);
+
             return new ResponseEntity<>(
                     new ResponseData<>(getById(id), "Income" + SUCCESSFULLY_ADDED), HttpStatus.OK);
         } catch (ResponseStatusException e) {

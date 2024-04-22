@@ -42,7 +42,7 @@ public class IncomeServiceImpl extends BaseServicesImpl<Income, String> implemen
     private BudgetService budgetService;
     private PaginationUtil paginationUtil;
     private ModelMapper modelMapper;
-    // private HistoryRepository historyRepository;
+    private HistoryRepository historyRepository;
 
     /**
      * This method is used to get income by title
@@ -158,10 +158,11 @@ public class IncomeServiceImpl extends BaseServicesImpl<Income, String> implemen
             budget.setTotalBalance(totalBalance);
             budgetRepository.save(budget);
 
-            // History history = new History();
-            // history.setDate(now);
-            // history.setNotes(incomeRequest.getDescription());
-            // historyRepository.save(history);
+            History history = new History();
+            history.setDate(now);
+            history.setNotes(incomeRequest.getDescription());
+            history.setIncome(updatedIncome);
+            historyRepository.save(history);
 
             return new ResponseEntity<>(
                     new ResponseData<>(getById(id), "Income" + SUCCESSFULLY_ADDED), HttpStatus.OK);

@@ -70,7 +70,7 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
     }
 
     /**
-     * This method is used to get websites for admin page
+     * This method is used to get budget for admin page
      * 
      * @param keyword - Keyword for search
      * @param page    - Page number

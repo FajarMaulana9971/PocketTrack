@@ -30,6 +30,7 @@ import PocketTrack.Serverapp.Domains.Entities.Account;
 import PocketTrack.Serverapp.Domains.Entities.AccountRole;
 import PocketTrack.Serverapp.Domains.Entities.AccountStatus;
 import PocketTrack.Serverapp.Domains.Entities.Budget;
+import PocketTrack.Serverapp.Domains.Entities.History;
 import PocketTrack.Serverapp.Domains.Entities.Income;
 import PocketTrack.Serverapp.Domains.Entities.Outcome;
 import PocketTrack.Serverapp.Domains.Entities.User;
@@ -51,6 +52,7 @@ import PocketTrack.Serverapp.Repositories.AccountRepository;
 import PocketTrack.Serverapp.Repositories.AccountRoleRepository;
 import PocketTrack.Serverapp.Repositories.AccountStatusRepository;
 import PocketTrack.Serverapp.Repositories.BudgetRepository;
+import PocketTrack.Serverapp.Repositories.HistoryRepository;
 import PocketTrack.Serverapp.Repositories.IncomeRepository;
 import PocketTrack.Serverapp.Repositories.OutcomeRepository;
 import PocketTrack.Serverapp.Repositories.RoleRepository;
@@ -72,7 +74,7 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
     private AccountRepository accountRepository;
     private RoleRepository roleRepository;
     private UserService userService;
-    private BudgetService budgetService;
+    private HistoryRepository historyRepository;
     private BudgetRepository budgetRepository;
     private IncomeRepository incomeRepository;
     private OutcomeRepository outcomeRepository;
@@ -384,6 +386,12 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
                 User user = account.getUser();
                 user.setBudget(savedBudget);
                 userRepository.save(user);
+
+                History history = new History();
+                history.setDate(now);
+                history.setNotes(budget.getDescription());
+                history.setBudget(savedBudget);
+                historyRepository.save(history);
             }
             account.setAccountStatus(accountStatusRepository.getReferenceById(0));
             account.setVerificationCode(null);

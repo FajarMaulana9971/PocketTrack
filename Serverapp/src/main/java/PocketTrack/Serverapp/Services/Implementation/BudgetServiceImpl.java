@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import static PocketTrack.Serverapp.Domains.Constants.ServiceMessage.*;
 
 import PocketTrack.Serverapp.Domains.Entities.Budget;
+import PocketTrack.Serverapp.Domains.Entities.History;
 import PocketTrack.Serverapp.Domains.Entities.Income;
 import PocketTrack.Serverapp.Domains.Entities.Outcome;
 import PocketTrack.Serverapp.Domains.Entities.User;
@@ -25,6 +26,7 @@ import PocketTrack.Serverapp.Domains.Models.Requests.BudgetRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.BudgetRepository;
+import PocketTrack.Serverapp.Repositories.HistoryRepository;
 import PocketTrack.Serverapp.Repositories.IncomeRepository;
 import PocketTrack.Serverapp.Repositories.OutcomeRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
@@ -44,6 +46,7 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
     private PaginationUtil paginationUtil;
     private IncomeRepository incomeRepository;
     private OutcomeRepository outcomeRepository;
+    private HistoryRepository historyRepository;
 
     /**
      * This method is used to get budget by total balance
@@ -130,6 +133,12 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
             outcome.setIsDeleted(false);
             outcome.setStatus(true);
             outcomeRepository.save(outcome);
+
+            History history = new History();
+            history.setDate(now);
+            history.setNotes(budgetRequest.getDescription());
+            history.setBudget(savedBudget);
+            historyRepository.save(history);
 
             return new ResponseEntity<>(
                     new ResponseData<>(budgetRepository.save(savedBudget), "Budget" + SUCCESSFULLY_CREATED),

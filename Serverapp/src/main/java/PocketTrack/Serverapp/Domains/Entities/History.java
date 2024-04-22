@@ -30,4 +30,8 @@ public class History extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "budget_id")
     private Budget budget;
+
+    @ManyToOne
+    @JoinColumn(name = "income_id")
+    private Income income;
 }

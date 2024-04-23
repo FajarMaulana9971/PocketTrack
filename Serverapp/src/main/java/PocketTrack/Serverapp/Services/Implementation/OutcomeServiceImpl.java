@@ -18,12 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import PocketTrack.Serverapp.Domains.Entities.Budget;
+import PocketTrack.Serverapp.Domains.Entities.History;
 import PocketTrack.Serverapp.Domains.Entities.Outcome;
 import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.OutcomeRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
 import PocketTrack.Serverapp.Domains.Models.Responses.ResponseData;
 import PocketTrack.Serverapp.Repositories.BudgetRepository;
+import PocketTrack.Serverapp.Repositories.HistoryRepository;
 import PocketTrack.Serverapp.Repositories.OutcomeRepository;
 import PocketTrack.Serverapp.Services.Implementation.Base.BaseServicesImpl;
 import PocketTrack.Serverapp.Services.Interfaces.BudgetService;
@@ -40,6 +42,7 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
     private ModelMapper modelMapper;
     private BudgetService budgetService;
     private BudgetRepository budgetRepository;
+    private HistoryRepository historyRepository;
 
     /**
      * This method is used to get outcome by title
@@ -280,6 +283,14 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
             budget.setTotalBalance(totalBalance);
             budget.setDate(now);
             budgetRepository.save(budget);
+
+            History history = new History();
+            history.setDate(now);
+            history.setNotes(updatedOutcome.getDescription());
+            history.setAmount(totalBalance);
+            history.setOutcome(updatedOutcome);
+            historyRepository.save(history);
+
             return new ResponseEntity<>(new ResponseData<>(updatedOutcome, "Outcome has successfully completed"),
                     HttpStatus.OK);
         } catch (ResponseStatusException e) {

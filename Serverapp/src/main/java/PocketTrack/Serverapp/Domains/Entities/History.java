@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Table(name = "tb_tr_histories")
+@Table(name = "tb_m_histories")
 @Entity
 public class History extends BaseEntity {
 

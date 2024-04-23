@@ -1,5 +1,6 @@
 package PocketTrack.Serverapp.Domains.Entities;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import PocketTrack.Serverapp.Domains.Entities.Base.BaseEntity;
@@ -27,6 +28,8 @@ public class History extends BaseEntity {
     @Column(length = 500)
     private String notes;
 
+    private BigDecimal amount;
+
     @ManyToOne
     @JoinColumn(name = "budget_id")
     private Budget budget;
@@ -34,4 +37,8 @@ public class History extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "income_id")
     private Income income;
+
+    @ManyToOne
+    @JoinColumn(name = "outcome_id")
+    private Outcome outcome;
 }

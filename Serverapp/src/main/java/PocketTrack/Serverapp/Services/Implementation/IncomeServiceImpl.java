@@ -161,6 +161,7 @@ public class IncomeServiceImpl extends BaseServicesImpl<Income, String> implemen
             History history = new History();
             history.setDate(now);
             history.setNotes(incomeRequest.getDescription());
+            history.setAmount(totalBalance);
             history.setIncome(updatedIncome);
             historyRepository.save(history);
 

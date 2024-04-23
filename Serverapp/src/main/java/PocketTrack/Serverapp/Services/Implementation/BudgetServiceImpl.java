@@ -137,6 +137,9 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
             History history = new History();
             history.setDate(now);
             history.setNotes(budgetRequest.getDescription());
+            history.setAmount(savedBudget.getTotalBalance());
+            history.setIncome(income);
+            history.setOutcome(outcome);
             history.setBudget(savedBudget);
             historyRepository.save(history);
 

@@ -390,6 +390,9 @@ public class AuthServiceImpl extends BaseServicesImpl<User, String> implements A
                 History history = new History();
                 history.setDate(now);
                 history.setNotes(budget.getDescription());
+                history.setAmount(BigDecimal.ZERO);
+                history.setIncome(income);
+                history.setOutcome(outcome);
                 history.setBudget(savedBudget);
                 historyRepository.save(history);
             }

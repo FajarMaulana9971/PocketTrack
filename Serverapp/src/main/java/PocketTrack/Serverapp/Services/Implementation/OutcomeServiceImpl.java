@@ -287,8 +287,9 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
             History history = new History();
             history.setDate(now);
             history.setNotes(updatedOutcome.getDescription());
-            history.setAmount(totalBalance);
+            history.setAmount(newAmount);
             history.setOutcome(updatedOutcome);
+            history.setBudget(budget);
             historyRepository.save(history);
 
             return new ResponseEntity<>(new ResponseData<>(updatedOutcome, "Outcome has successfully completed"),

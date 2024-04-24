@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import PocketTrack.Serverapp.Domains.Entities.Budget;
 import PocketTrack.Serverapp.Domains.Entities.History;
 import PocketTrack.Serverapp.Domains.Entities.Outcome;
+import PocketTrack.Serverapp.Domains.Enums.Type;
 import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.OutcomeRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
@@ -290,6 +291,7 @@ public class OutcomeServiceImpl extends BaseServicesImpl<Outcome, String> implem
             history.setAmount(newAmount);
             history.setOutcome(updatedOutcome);
             history.setBudget(budget);
+            history.setType(Type.OUTCOME);
             historyRepository.save(history);
 
             return new ResponseEntity<>(new ResponseData<>(updatedOutcome, "Outcome has successfully completed"),

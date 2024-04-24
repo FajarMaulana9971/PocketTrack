@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import PocketTrack.Serverapp.Domains.Entities.Base.BaseEntity;
+import PocketTrack.Serverapp.Domains.Enums.Type;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -29,6 +32,10 @@ public class History extends BaseEntity {
     private String notes;
 
     private BigDecimal amount;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @ManyToOne
     @JoinColumn(name = "budget_id")

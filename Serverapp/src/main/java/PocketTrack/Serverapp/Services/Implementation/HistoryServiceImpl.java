@@ -1,8 +1,13 @@
 package PocketTrack.Serverapp.Services.Implementation;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -50,5 +55,19 @@ public class HistoryServiceImpl extends BaseServicesImpl<History, String> implem
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
+    }
+
+    /**
+     * This method is used to delete all history when history date has 2 month
+     * 
+     * @return History has been deleted
+     */
+    @Override
+    @Scheduled(cron = "0 0 4 * * ?")
+    public void deleteHistory() {
+        LocalDate twoMonthsAgo = LocalDate.now().minusMonths(2);
+        Specification<History> oldHistoriesSpec = specificationFactory.isLessThan("date", twoMonthsAgo);
+        List<History> oldHistories = historyRepository.findAll(oldHistoriesSpec);
+        historyRepository.deleteAll(oldHistories);
     }
 }

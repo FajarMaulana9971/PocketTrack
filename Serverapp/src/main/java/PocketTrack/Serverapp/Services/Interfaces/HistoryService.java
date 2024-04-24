@@ -8,4 +8,6 @@ public interface HistoryService extends BaseServices<History, String> {
 
     ObjectResponseData<History> getAllHistories(String historyId, String keywoard, int page, int size);
 
+    void deleteHistory();
+
 }

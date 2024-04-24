@@ -32,21 +32,27 @@ public class HistoryServiceImpl extends BaseServicesImpl<History, String> implem
     /**
      * This method is used to get all histories for public page
      * 
-     * @param keyword - Keyword for search
-     * @param page    - Page number
-     * @param size    - Size per page
-     * @return List of budget with pagination
+     * @param budgetId - Budget id of history
+     * @param keyword  - Keyword for search
+     * @param page     - Page number
+     * @param size     - Size per page
+     * @return List of history with pagination
      */
     @Override
-    public ObjectResponseData<History> getAllHistories(String historyId, String keywoard, int page, int size) {
+    public ObjectResponseData<History> getAllHistoryBasedOnType(String budgetId, String keywoard, int page, int size) {
         if (page > 0)
             page = page - 1;
 
         GenericSpecificationsBuilder<History> historyBuilder = new GenericSpecificationsBuilder<>();
-        if (keywoard != null) {
-            historyBuilder.with(specificationFactory.isContain("date", keywoard)
-                    .or(specificationFactory.isContain("notes", keywoard)));
+        historyBuilder.with(specificationFactory.isEqual("budgetId", budgetId));
+
+        if ("income".equals(keywoard)) {
+            historyBuilder.with(specificationFactory.isEqual("type", "income"));
+        } else if ("outcome".equals(keywoard)) {
+            historyBuilder.with(specificationFactory.isEqual("type", "outcome"));
         }
+        historyBuilder.with(specificationFactory.isEqual("budgetId", budgetId)
+                .and(specificationFactory.isEqual("type", "income")));
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<History> historyPage = historyRepository.findAll(historyBuilder.build(), pageable);

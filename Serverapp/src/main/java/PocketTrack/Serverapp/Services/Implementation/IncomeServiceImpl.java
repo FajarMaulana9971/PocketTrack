@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import PocketTrack.Serverapp.Domains.Entities.Budget;
 import PocketTrack.Serverapp.Domains.Entities.History;
 import PocketTrack.Serverapp.Domains.Entities.Income;
+import PocketTrack.Serverapp.Domains.Enums.Type;
 import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.IncomeRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
@@ -164,6 +165,7 @@ public class IncomeServiceImpl extends BaseServicesImpl<Income, String> implemen
             history.setAmount(newAmount);
             history.setIncome(updatedIncome);
             history.setBudget(budget);
+            history.setType(Type.INCOME);
             historyRepository.save(history);
 
             return new ResponseEntity<>(

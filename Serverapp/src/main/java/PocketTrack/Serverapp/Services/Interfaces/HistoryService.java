@@ -6,8 +6,9 @@ import PocketTrack.Serverapp.Services.Interfaces.Base.BaseServices;
 
 public interface HistoryService extends BaseServices<History, String> {
 
-    ObjectResponseData<History> getAllHistoryBasedOnType(String budgetId, String keywoard, int page, int size);
+    ObjectResponseData<History> getAllHistoriesBasedOnType(String budgetId, String keywoard, int page, int size);
+
+    ObjectResponseData<History> getAllHistories(String historyId, String keywoard, int page, int size);
 
     void deleteHistory();
-
 }

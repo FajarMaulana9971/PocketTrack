@@ -32,27 +32,44 @@ public class HistoryServiceImpl extends BaseServicesImpl<History, String> implem
     /**
      * This method is used to get all histories for public page
      * 
-     * @param budgetId - Budget id of history
-     * @param keyword  - Keyword for search
-     * @param page     - Page number
-     * @param size     - Size per page
-     * @return List of history with pagination
+     * @param keyword - Keyword for search
+     * @param page    - Page number
+     * @param size    - Size per page
+     * @return List of budget with pagination
      */
     @Override
-    public ObjectResponseData<History> getAllHistoryBasedOnType(String budgetId, String keywoard, int page, int size) {
+    public ObjectResponseData<History> getAllHistories(String historyId, String keywoard, int page, int size) {
+        if (page > 0)
+            page = page - 1;
+
+        GenericSpecificationsBuilder<History> historyBuilder = new GenericSpecificationsBuilder<>();
+        if (keywoard != null) {
+            historyBuilder.with(specificationFactory.isContain("date", keywoard)
+                    .or(specificationFactory.isContain("notes", keywoard)));
+        }
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<History> historyPage = historyRepository.findAll(historyBuilder.build(), pageable);
+            PageData pagination = paginationUtil.setPageData(page, size, (int) historyPage.getTotalElements());
+            return new ObjectResponseData<>(historyPage.getContent(), pagination);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
+        }
+    }
+
+    public ObjectResponseData<History> getAllHistoriesBasedOnType(String budgetId, String keyword, int page, int size) {
         if (page > 0)
             page = page - 1;
 
         GenericSpecificationsBuilder<History> historyBuilder = new GenericSpecificationsBuilder<>();
         historyBuilder.with(specificationFactory.isEqual("budgetId", budgetId));
 
-        if ("income".equals(keywoard)) {
+        if ("income".equals(keyword)) {
             historyBuilder.with(specificationFactory.isEqual("type", "income"));
-        } else if ("outcome".equals(keywoard)) {
+        } else if ("outcome".equals(keyword)) {
             historyBuilder.with(specificationFactory.isEqual("type", "outcome"));
         }
-        historyBuilder.with(specificationFactory.isEqual("budgetId", budgetId)
-                .and(specificationFactory.isEqual("type", "income")));
+
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<History> historyPage = historyRepository.findAll(historyBuilder.build(), pageable);

@@ -29,6 +29,7 @@ public class HistoryServiceImpl extends BaseServicesImpl<History, String> implem
     private HistoryRepository historyRepository;
     private PaginationUtil paginationUtil;
 
+    // this method is wrong. the truth is get history by id
     /**
      * This method is used to get all histories for public page
      * 
@@ -56,7 +57,17 @@ public class HistoryServiceImpl extends BaseServicesImpl<History, String> implem
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
     }
+    // end
 
+    /**
+     * This method is used to get all histories based on type for public page
+     * 
+     * @param budgetId - budget id for param
+     * @param keyword  - Keyword for search
+     * @param page     - Page number
+     * @param size     - Size per page
+     * @return List of budget with pagination
+     */
     public ObjectResponseData<History> getAllHistoriesBasedOnType(String budgetId, String keyword, int page, int size) {
         if (page > 0)
             page = page - 1;

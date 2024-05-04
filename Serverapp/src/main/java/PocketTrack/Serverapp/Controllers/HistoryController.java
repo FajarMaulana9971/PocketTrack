@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 public class HistoryController {
     private HistoryService historyService;
 
+    // this method is wrong
     @GetMapping("{historyId}")
     public ObjectResponseData<History> getAllHistories(@PathVariable String historyId,
             @RequestParam(required = false) String keywoard,
@@ -24,4 +25,13 @@ public class HistoryController {
             @RequestParam(required = false, defaultValue = "10") int size) {
         return historyService.getAllHistories(historyId, keywoard, page, size);
     };
+    // end
+
+    @GetMapping("type/{budgetId}")
+    public ObjectResponseData<History> getAllHistoryBasedOnType(String budgetId,
+            @RequestParam(required = false) String keywoard,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+        return historyService.getAllHistoriesBasedOnType(budgetId, keywoard, page, size);
+    }
 }

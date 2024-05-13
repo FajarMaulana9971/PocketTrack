@@ -21,6 +21,7 @@ import PocketTrack.Serverapp.Domains.Entities.History;
 import PocketTrack.Serverapp.Domains.Entities.Income;
 import PocketTrack.Serverapp.Domains.Entities.Outcome;
 import PocketTrack.Serverapp.Domains.Entities.User;
+import PocketTrack.Serverapp.Domains.Enums.Type;
 import PocketTrack.Serverapp.Domains.Models.PageData;
 import PocketTrack.Serverapp.Domains.Models.Requests.BudgetRequest;
 import PocketTrack.Serverapp.Domains.Models.Responses.ObjectResponseData;
@@ -138,6 +139,7 @@ public class BudgetServiceImpl extends BaseServicesImpl<Budget, String> implemen
             history.setDate(now);
             history.setNotes(budgetRequest.getDescription());
             history.setAmount(savedBudget.getTotalBalance());
+            history.setType(Type.DEFAULT);
             history.setIncome(income);
             history.setOutcome(outcome);
             history.setBudget(savedBudget);

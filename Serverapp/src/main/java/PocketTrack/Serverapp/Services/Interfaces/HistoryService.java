@@ -8,7 +8,7 @@ public interface HistoryService extends BaseServices<History, String> {
 
     ObjectResponseData<History> getAllHistoriesBasedOnType(String budgetId, String keywoard, int page, int size);
 
-    ObjectResponseData<History> getAllHistories(String historyId, String keywoard, int page, int size);
+    ObjectResponseData<History> getAllHistories(String keywoard, int page, int size);
 
     void deleteHistory();
 }

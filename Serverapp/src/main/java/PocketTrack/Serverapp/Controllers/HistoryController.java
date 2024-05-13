@@ -17,15 +17,13 @@ import lombok.AllArgsConstructor;
 public class HistoryController {
     private HistoryService historyService;
 
-    // this method is wrong
-    @GetMapping("{historyId}")
-    public ObjectResponseData<History> getAllHistories(@PathVariable String historyId,
+    @GetMapping("admin/getAllHistories")
+    public ObjectResponseData<History> getAllHistories(
             @RequestParam(required = false) String keywoard,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size) {
-        return historyService.getAllHistories(historyId, keywoard, page, size);
+        return historyService.getAllHistories(keywoard, page, size);
     };
-    // end
 
     @GetMapping("type/{budgetId}")
     public ObjectResponseData<History> getAllHistoryBasedOnType(String budgetId,
